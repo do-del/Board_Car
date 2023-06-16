@@ -1,0 +1,57 @@
+C251 COMPILER V5.60.0,  main                                                               16/06/23  16:38:40  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE main
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_c251\C251\BIN\C251.EXE src\main.c INTR2 BROWSE DEBUG PRINT(.\Listings\main.lst) TABS(2) OBJ
+                    -ECT(.\Objects\main.obj) 
+
+stmt  level    source
+
+    1          #include "stc32g.h"
+    2          #include "intrins.h"
+    3          
+    4          #define LED_PIN P53
+    5          
+    6          void main(void)
+    7          {
+    8   1        EAXFR = 1;
+    9   1        CKCON = 0x00;
+   10   1        WTST = 0x00;
+   11   1        
+   12   1        P0M0 = 0x00;
+   13   1        P0M1 = 0x00;
+   14   1        
+   15   1        P5M0 = 0x00;
+   16   1        P5M1 = 0x00;
+   17   1        
+   18   1        LED_PIN = 0;
+   19   1        
+   20   1        while(1)
+   21   1        {
+   22   2        }
+   23   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =        25     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =    ------     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =    ------     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
