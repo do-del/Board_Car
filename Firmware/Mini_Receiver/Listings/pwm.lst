@@ -1,0 +1,150 @@
+C51 COMPILER V9.60.0.0   PWM                                                               02/12/2023 14:43:41 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE PWM
+OBJECT MODULE PLACED IN .\Objects\pwm.obj
+COMPILER INVOKED BY: D:\Keil51\C51\BIN\C51.EXE pwm.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\pwm.ls
+                    -t) TABS(2) OBJECT(.\Objects\pwm.obj)
+
+line level    source
+
+   1          #include "pwm.h"
+   2          
+   3          void PWMA_Init(void)
+   4          {
+   5   1        PWM1 = 0;
+   6   1        PWM2 = 0;
+   7   1        PWM3 = 0;
+   8   1        PWM4 = 0;
+   9   1        
+  10   1        P1M0 |= 0x55; //0b0101 0101
+  11   1        P1M1 &= ~0x55;
+  12   1        
+  13   1        PWMA_PSCR = 11;
+  14   1        PWMA_ARR = 19999;
+  15   1        PWMA_CCER1 = 0;
+  16   1        PWMA_CCER2 = 0;
+  17   1        PWMA_SR1 = 0;
+  18   1        PWMA_SR2 = 0;
+  19   1        PWMA_ENO = 0;
+  20   1        PWMA_PS = 0;
+  21   1        PWMA_IER = 0;
+  22   1        
+  23   1        //PWM1
+  24   1        PWMA_CCMR1 = 0x68;
+  25   1        PWMA_CCR1 = 1499;
+  26   1        PWMA_CCER1 |= 0x01;
+  27   1        
+  28   1        PWMA_CCMR2 = 0x68;
+  29   1        PWMA_CCR2 = 1499;
+  30   1        PWMA_CCER1 |= 0x10;
+  31   1        
+  32   1        PWMA_CCMR3 = 0x68;
+  33   1        PWMA_CCR3 = 1499;
+  34   1        PWMA_CCER2 |= 0x01;
+  35   1        
+  36   1        PWMA_CCMR4 = 0x68;
+  37   1        PWMA_CCR4 = 1499;
+  38   1        PWMA_CCER2 |= 0x10;
+  39   1        
+  40   1        PWMA_BKR = 0x80;
+  41   1        PWMA_CR1 = 0x81;
+  42   1        PWMA_EGR = 0x01;
+  43   1        
+  44   1        PWMA_ENO |= 0x55; //0b0101 0101
+  45   1      }
+  46          
+  47          void PWMB_Init(void)
+  48          {
+  49   1        PWM5 = 0;
+  50   1        PWM6 = 0;
+  51   1        PWM7 = 0;
+  52   1        PWM8 = 0;
+  53   1        
+  54   1        P2M0 |= 0x0f; //0b0000 1111
+C51 COMPILER V9.60.0.0   PWM                                                               02/12/2023 14:43:41 PAGE 2   
+
+  55   1        P2M1 &= ~0x0f;
+  56   1        
+  57   1        PWMB_PSCR = 11;
+  58   1        PWMB_ARR = 19999;
+  59   1        PWMB_CCER1 = 0;
+  60   1        PWMB_CCER2 = 0;
+  61   1        PWMB_SR1 = 0;
+  62   1        PWMB_SR2 = 0;
+  63   1        PWMB_ENO = 0;
+  64   1        PWMB_PS = 0;
+  65   1        PWMB_IER = 0;
+  66   1        
+  67   1        //PWM5
+  68   1        PWMB_CCMR1 = 0x68;
+  69   1        PWMB_CCR5 = 1499;
+  70   1        PWMB_CCER1 |= 0x01;
+  71   1        
+  72   1        PWMB_CCMR2 = 0x68;
+  73   1        PWMB_CCR6 = 1499;
+  74   1        PWMB_CCER1 |= 0x10;
+  75   1        
+  76   1        PWMB_CCMR3 = 0x68;
+  77   1        PWMB_CCR7 = 1499;
+  78   1        PWMB_CCER2 |= 0x01;
+  79   1        
+  80   1        PWMB_CCMR4 = 0x68;
+  81   1        PWMB_CCR8 = 1499;
+  82   1        PWMB_CCER2 |= 0x10;
+  83   1        
+  84   1        PWMB_BKR = 0x80;
+  85   1        PWMB_CR1 = 0x81;
+  86   1        PWMB_EGR = 0x01;
+  87   1        
+  88   1        PWMB_ENO |= 0x55; //0b0101 0101
+  89   1      }
+  90          
+  91          void PWM_Set_Duty(unsigned char ch,uint16_t duty)
+  92          {
+  93   1        switch(ch)
+  94   1        {
+  95   2          case CH_0:
+  96   2            PWMB_CCR8 = duty;
+  97   2            break;
+  98   2          case CH_1:
+  99   2            PWMB_CCR7 = duty;
+ 100   2            break;
+ 101   2          case CH_2:
+ 102   2            PWMB_CCR6 = duty;
+ 103   2            break;
+ 104   2          case CH_3:
+ 105   2            PWMB_CCR5 = duty;
+ 106   2            break;
+ 107   2          case CH_4:
+ 108   2            PWMA_CCR1 = duty;
+ 109   2            break;
+ 110   2          case CH_5:
+ 111   2            PWMA_CCR2 = duty;
+ 112   2            break;
+ 113   2          case CH_6:
+ 114   2            PWMA_CCR3 = duty;
+ 115   2            break;
+ 116   2          case CH_7:
+C51 COMPILER V9.60.0.0   PWM                                                               02/12/2023 14:43:41 PAGE 3   
+
+ 117   2            PWMA_CCR4 = duty;
+ 118   2            break;
+ 119   2          default:
+ 120   2            break;
+ 121   2        }
+ 122   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    431    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

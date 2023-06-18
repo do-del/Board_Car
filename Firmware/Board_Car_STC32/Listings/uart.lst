@@ -1,0 +1,69 @@
+C251 COMPILER V5.60.0,  uart                                                               16/06/23  21:27:59  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE uart
+OBJECT MODULE PLACED IN .\Objects\uart.obj
+COMPILER INVOKED BY: D:\Keil_v251\C251\BIN\C251.EXE src\uart.c INTR2 BROWSE DEBUG PRINT(.\Listings\uart.lst) TABS(2) OBJ
+                    -ECT(.\Objects\uart.obj) 
+
+stmt  level    source
+
+    1          #include "uart.h"
+    2          
+    3          void DebugInit(void)
+    4          {
+    5   1        SCON = 0x50;
+    6   1        T2L = DEBUG_BRT;
+    7   1        T2H = DEBUG_BRT>>8;
+    8   1        S1BRT = 1;
+    9   1        T2x12 = 1;
+   10   1        T2R = 1;
+   11   1      }
+   12          
+   13          void DebugSend(char ch)
+   14          {
+   15   1        while(!TI);
+   16   1        TI = 0;
+   17   1        SBUF = ch;
+   18   1      }
+   19          
+   20          void DebugSendStr(char *p)
+   21          {
+   22   1        while(*p)
+   23   1        {
+   24   2          DebugSend(*p);
+   25   2          p++;
+   26   2        }
+   27   1      }
+   28          
+   29          void UartIsr() interrupt 4
+   30          {
+   31   1        if(RI)
+   32   1        {
+   33   2          DebugSend(SBUF);
+   34   2        }
+   35   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =        76     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =    ------     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =    ------     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

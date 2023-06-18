@@ -1,0 +1,250 @@
+C251 COMPILER V5.60.0,  main                                                               18/06/23  10:11:36  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE main
+OBJECT MODULE PLACED IN .\obj\main.obj
+COMPILER INVOKED BY: D:\Keil_v251\C251\BIN\C251.EXE src\main.c XSMALL INTR2 BROWSE INCDIR(.\Del;.\src) DEBUG PRINT(.\obj
+                    -\main.lst) TABS(2) OBJECT(.\obj\main.obj) 
+
+stmt  level    source
+
+    1          /*---------------------------------------------------------------------*/
+    2          /* --- STC MCU Limited ------------------------------------------------*/
+    3          /* --- STC 1T Series MCU Demo Programme -------------------------------*/
+    4          /* --- Mobile: (86)13922805190 ----------------------------------------*/
+    5          /* --- Fax: 86-0513-55012956,55012947,55012969 ------------------------*/
+    6          /* --- Tel: 86-0513-55012928,55012929,55012966 ------------------------*/
+    7          /* --- Web: www.STCMCU.com --------------------------------------------*/
+    8          /* --- Web: www.STCMCUDATA.com  ---------------------------------------*/
+    9          /* --- QQ:  800003751 -------------------------------------------------*/
+   10          /* Èç¹ûÒªÔÚ³ÌÐòÖÐÊ¹ÓÃ´Ë´úÂë,ÇëÔÚ³ÌÐòÖÐ×¢Ã÷Ê¹ÓÃÁËSTCµÄ×ÊÁÏ¼°³ÌÐò        */
+   11          /*---------------------------------------------------------------------*/
+   12          
+   13          /*************  ¹¦ÄÜËµÃ÷    **************
+   14          
+   15          ±¾Àý³Ì»ùÓÚSTC32GºËÐÄ×ª½Ó°å£¨ÍÀÁúµ¶£©½øÐÐ±àÐ´²âÊÔ¡£
+   16          
+   17          Ê¹ÓÃUSBÏßÁ¬½ÓºËÐÄ°åUSB½Ó¿ÚÓëµçÄÔ;
+   18          
+   19          MCUÍ¨¹ýUSB CDC(Communication Device Class)Ð­ÒéÊ¶±ðÎª´®¿ÚÉè±¸;
+   20          
+   21          Ê¹ÓÃ´®¿ÚÖúÊÖ´ò¿ªCDCÐéÄâ´®¿Ú£¬È»ºóÏòMCU·¢ËÍÊý¾Ý£¬MCU·µ»Ø½ÓÊÕµ½µÄÊý¾Ýµ½´®¿ÚÖúÊÖ;
+   22          
+   23          Êý¾Ý³¤¶ÈÏÞÖÆÔÚ63×Ö½ÚÒÔÄÚ¡£
+   24          
+   25          ´ËÍâ³ÌÐòÑÝÊ¾Á½ÖÖ¸´Î»½øÈëUSBÏÂÔØÄ£Ê½µÄ·½·¨£º
+   26          1. Í¨¹ýÃ¿1ºÁÃëÖ´ÐÐÒ»´Î¡°KeyResetScan¡±º¯Êý£¬ÊµÏÖ³¤°´P3.2¿Ú°´¼ü´¥·¢MCU¸´Î»£¬½øÈëUSBÏÂÔØÄ£Ê½¡£
+   27             (Èç¹û²»Ï£Íû¸´Î»½øÈëUSBÏÂÔØÄ£Ê½µÄ»°£¬¿ÉÔÚ¸´Î»´úÂëÀï½« IAP_CONTR µÄbit6Çå0£¬Ñ¡Ôñ¸´Î»½øÓÃ»§³ÌÐòÇø)
+   28          2. Í¨¹ý¼ÓÔØ¡°stc_usb_cdc_32g.lib¡±¿âº¯Êý£¬ÊµÏÖÊ¹ÓÃSTC-ISPÈí¼þ·¢ËÍÖ¸Áî´¥·¢MCU¸´Î»£¬½øÈëUSBÏÂÔØÄ£Ê½²¢×Ô¶¯ÏÂ
+             -ÔØ¡£
+   29             (×¢Òâ£ºÊ¹ÓÃCDC½Ó¿Ú´¥·¢MCU¸´Î»²¢×Ô¶¯ÏÂÔØ¹¦ÄÜ£¬ÐèÒª¹´Ñ¡¶Ë¿ÚÉèÖÃ£ºÏÂ´ÎÇ¿ÖÆÊ¹ÓÃ¡±STC USB Writer (HID)¡±½øÐ
+             -ÐISPÏÂÔØ)
+   30          
+   31          ÏÂÔØÊ±, Ñ¡ÔñÊ±ÖÓ 24MHZ (ÓÃ»§¿É×ÔÐÐÐÞ¸ÄÆµÂÊ)¡£
+   32          
+   33          ******************************************/
+   34          
+   35          #include "stc.h"
+   36          #include "usb.h"
+   37          #include "debug.h"
+   38          #include "led.h"
+   39          #include "i2c.h"
+   40          #include "mpu6050.h"
+   41          #include "pwm.h"
+   42          
+   43          #define MAIN_Fosc       24000000L   //¶¨ÒåÖ÷Ê±ÖÓ
+   44          
+   45          char *USER_DEVICEDESC = NULL;
+   46          char *USER_PRODUCTDESC = NULL;
+   47          char *USER_STCISPCMD = "@STCISP#";                      //ÉèÖÃ×Ô¶¯¸´Î»µ½ISPÇøµÄÓÃ»§½Ó¿ÚÃüÁî
+   48          
+   49          //P3.2¿Ú°´¼ü¸´Î»ËùÐè±äÁ¿
+   50          bit Key_Flag;
+   51          u16 Key_cnt;
+   52          
+   53          mpu6050_struct mpu_dat;
+   54          
+   55          void sys_init();
+   56          void delay_ms(u8 ms);
+C251 COMPILER V5.60.0,  main                                                               18/06/23  10:11:36  PAGE 2   
+
+   57          void KeyResetScan(void);
+   58          
+   59          void I2C_Scan(void)
+   60          {
+   61   1      #if DEBUG_ENABLE
+   62   1        unsigned char addr_test;
+   63   1        unsigned char flag = 0;
+   64   1        
+   65   1        printf("i2c scan start...\r\n");
+   66   1        
+   67   1        for(addr_test = 0; addr_test < 200; addr_test++)
+   68   1        {
+   69   2          I2C_Start();
+   70   2          if(!I2C_SendByte(addr_test<<1)) flag = 1;
+   71   2          I2C_Stop();
+   72   2          if(flag)
+   73   2          {
+   74   3            flag = 0;
+   75   3            printf("Find addr: %X\r\n", addr_test);
+   76   3          }
+   77   2        }
+   78   1        
+   79   1        printf("i2c scan done\r\n");
+   80   1        
+   81   1      #endif
+   82   1      }
+   83          
+   84          void main()
+   85          {
+   86   1        sys_init();  //ÏµÍ³³õÊ¼»¯
+   87   1        usb_init();  //USB CDC ½Ó¿ÚÅäÖÃ
+   88   1        EA = 1;
+   89   1        
+   90   1        while(DeviceState != DEVSTATE_CONFIGURED); //µÈ´ýUSBÍê³ÉÅäÖÃ
+   91   1        
+   92   1        P20 = 0;
+   93   1        P21= 0;
+   94   1        P3PU |= 0x08;
+   95   1        delay_ms(200);
+   96   1        delay_ms(200);
+   97   1        delay_ms(200);
+   98   1        delay_ms(200);
+   99   1        delay_ms(200);
+  100   1        P21 = 1;
+  101   1        printf("---------STC32 Debug----------\r\n");
+  102   1        //I2C_Scan();
+  103   1        //mpu6050_init();
+  104   1        pwm_init();
+  105   1        pwma_setcycle(1000);
+  106   1        pwm1_setduty(300);
+  107   1        pwm4_setduty(300);
+  108   1        pwm1p_enable();
+  109   1        pwm4p_enable();
+  110   1        pwm1n_enable();
+  111   1        pwm4n_enable();
+  112   1        P20 = 1;
+  113   1        
+  114   1        while (1)
+  115   1        {
+  116   2          delay_ms(1);
+  117   2          KeyResetScan();   //³¤°´P3.2¿Ú°´¼ü´¥·¢Èí¼þ¸´Î»£¬½øÈëUSBÏÂÔØÄ£Ê½£¬²»ÐèÒª´Ë¹¦ÄÜ¿ÉÉ¾³ý±¾ÐÐ´úÂë
+  118   2          
+  119   2          if(DeviceState != DEVSTATE_CONFIGURED)  //µÈ´ýUSBÍê³ÉÅäÖÃ
+  120   2            continue;
+  121   2      
+  122   2          if (bUsbOutReady)
+C251 COMPILER V5.60.0,  main                                                               18/06/23  10:11:36  PAGE 3   
+
+  123   2          {
+  124   3            usb_OUT_done();    //½ÓÊÕÓ¦´ð£¨¹Ì¶¨¸ñÊ½£©
+  125   3            
+  126   3            printf("OutNumber=0x%X\r\n",OutNumber);  //Ê¹ÓÃ printf º¯Êý´òÓ¡½ÓÊÕÊý¾Ý³¤¶È
+  127   3      
+  128   3            memcpy(UsbInBuffer, UsbOutBuffer, OutNumber);  //½«½ÓÊÕÊý¾Ý(UsbOutBuffer)£¬¸´ÖÆµ½·¢ËÍ»º³åÇø(UsbInBuffe
+             -r)
+  129   3            usb_IN(OutNumber);      //Ô­Â··µ»Ø, ÓÃÓÚ²âÊÔ
+  130   3          }
+  131   2        }
+  132   1      }
+  133          
+  134          void sys_init()
+  135          {
+  136   1        WTST = 0;  //ÉèÖÃ³ÌÐòÖ¸ÁîÑÓÊ±²ÎÊý£¬¸³ÖµÎª0¿É½«CPUÖ´ÐÐÖ¸ÁîµÄËÙ¶ÈÉèÖÃÎª×î¿ì
+  137   1        EAXFR = 1; //À©Õ¹¼Ä´æÆ÷(XFR)·ÃÎÊÊ¹ÄÜ
+  138   1        CKCON = 0; //Ìá¸ß·ÃÎÊXRAMËÙ¶È
+  139   1      
+  140   1        P0M1 = 0x00;   P0M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
+  141   1        P1M1 = 0x00;   P1M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
+  142   1        P2M1 = 0x00;   P2M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
+  143   1        P3M1 = 0x00;   P3M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
+  144   1        P4M1 = 0x00;   P4M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
+  145   1        P5M1 = 0x00;   P5M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
+  146   1        P6M1 = 0x00;   P6M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
+  147   1        P7M1 = 0x00;   P7M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
+  148   1        
+  149   1        Debug_Init(); //µ÷ÊÔ¿Ú³õÊ¼»¯
+  150   1        
+  151   1        I2C_Init();
+  152   1      }
+  153          
+  154          //========================================================================
+  155          // º¯Êý: void delay_ms(u8 ms)
+  156          // ÃèÊö: ÑÓÊ±º¯Êý¡£
+  157          // ²ÎÊý: ms,ÒªÑÓÊ±µÄmsÊý, ÕâÀïÖ»Ö§³Ö1~255ms. ×Ô¶¯ÊÊÓ¦Ö÷Ê±ÖÓ.
+  158          // ·µ»Ø: none.
+  159          // °æ±¾: VER1.0
+  160          // ÈÕÆÚ: 2021-3-9
+  161          // ±¸×¢: 
+  162          //========================================================================
+  163          void delay_ms(u8 ms)
+  164          {
+  165   1           u16 i;
+  166   1           do{
+  167   2                i = MAIN_Fosc / 6000;
+  168   2                while(--i);   //6T per loop
+  169   2           }while(--ms);
+  170   1      }
+  171          
+  172          //========================================================================
+  173          // º¯Êý: void KeyResetScan(void)
+  174          // ÃèÊö: P3.2¿Ú°´¼ü³¤°´1Ãë´¥·¢Èí¼þ¸´Î»£¬½øÈëUSBÏÂÔØÄ£Ê½¡£
+  175          // ²ÎÊý: none.
+  176          // ·µ»Ø: none.
+  177          // °æ±¾: VER1.0
+  178          // ÈÕÆÚ: 2022-6-11
+  179          // ±¸×¢: 
+  180          //========================================================================
+  181          void KeyResetScan(void)
+  182          {
+  183   1          if(!P32)
+  184   1          {
+  185   2              if(!Key_Flag)
+  186   2              {
+  187   3                  Key_cnt++;
+C251 COMPILER V5.60.0,  main                                                               18/06/23  10:11:36  PAGE 4   
+
+  188   3                  if(Key_cnt >= 1000)   //Á¬Ðø1000msÓÐÐ§°´¼ü¼ì²â
+  189   3                  {
+  190   4                      Key_Flag = 1;   //ÉèÖÃ°´¼ü×´Ì¬£¬·ÀÖ¹ÖØ¸´´¥·¢
+  191   4      
+  192   4                      USBCON = 0x00;      //Çå³ýUSBÉèÖÃ
+  193   4                      USBCLK = 0x00;
+  194   4                      IRC48MCR = 0x00;
+  195   4                      
+  196   4                      delay_ms(10);
+  197   4                      IAP_CONTR = 0x60;   //´¥·¢Èí¼þ¸´Î»£¬´ÓISP¿ªÊ¼Ö´ÐÐ
+  198   4                      while (1);
+  199   4                  }
+  200   3              }
+  201   2          }
+  202   1          else
+  203   1          {
+  204   2              Key_cnt = 0;
+  205   2              Key_Flag = 0;
+  206   2          }
+  207   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =       416     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =        28     ------
+  bit size             =         1     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =       135     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

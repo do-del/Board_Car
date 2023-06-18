@@ -53,7 +53,7 @@
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\Listings\</ListingPath>
-          <HexFormatSelection>0</HexFormatSelection>
+          <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
           <CreateBatchFile>0</CreateBatchFile>
           <BeforeCompile>
@@ -118,7 +118,7 @@
         </DllOption>
         <DebugOption>
           <OPTHX>
-            <HexSelection>0</HexSelection>
+            <HexSelection>1</HexSelection>
             <HexRangeLowAddress>0</HexRangeLowAddress>
             <HexRangeHighAddress>0</HexRangeHighAddress>
             <HexOffset>0</HexOffset>
@@ -186,7 +186,7 @@
         </Utilities>
         <Target251>
           <Target251Misc>
-            <MemoryModel>0</MemoryModel>
+            <MemoryModel>3</MemoryModel>
             <RTOS>0</RTOS>
             <RomSize>3</RomSize>
             <NearDataHold>0</NearDataHold>
@@ -328,6 +328,11 @@
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\main.c</FilePath>
+            </File>
+            <File>
+              <FileName>stc_usb_cdc_32g.LIB</FileName>
+              <FileType>4</FileType>
+              <FilePath>.\src\stc_usb_cdc_32g.LIB</FilePath>
             </File>
           </Files>
         </Group>

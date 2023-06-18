@@ -1,0 +1,158 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              02/12/2023 20:42:34 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\Keil51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main.
+                    -lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "stc8h.h"
+   2          #include "intrins.h"
+   3          #include "RF24.h"
+*** WARNING C317 IN LINE 27 OF RF24.h: attempt to redefine macro 'NOP'
+   4          #include "uart.h"
+   5          #include "sys.h"
+   6          #include "eeprom.h"
+   7          #include "pwm.h"
+   8          
+   9          #define CH9 P37
+  10          #define CH10 P36
+  11          
+  12          #define KEY P33
+  13          #define LED P24
+  14          
+  15          void delay(unsigned int dly) // N ms延时函数
+  16          {
+  17   1        unsigned int j;
+  18   1        do
+  19   1        {
+  20   2          j = FOSC / 10000;
+  21   2          while(--j)  ;
+  22   2        }while(--dly);
+  23   1      }
+  24          
+  25          unsigned char rx[11] = {0};
+  26          unsigned char tx[11] = {0};
+  27          
+  28          void main()
+  29          {
+  30   1        P_SW2 |= 0x80;
+  31   1        
+  32   1        P2M0 |= 0x10;//0b0001 0000
+  33   1        P2M1 &= ~0x10; //LED配置为推挽输出
+  34   1        
+  35   1        P0M0 |= 0x0f; //0b0000 1111
+  36   1        P0M1 &= ~0x0f;
+  37   1        
+  38   1        P2M0 &= ~0x80; //0b1000 0000
+  39   1        P2M1 |= 0x80;
+  40   1        
+  41   1        P3M0 &= ~0x08; //0b0000 1000
+  42   1        P3M1 |= 0x08; //KEY配置为高阻输入
+  43   1        P3PU |= 0x08; //KEY配置上拉电阻
+  44   1        
+  45   1        P3M0 |= 0xc0;
+  46   1        P3M1 &= ~0xc0;
+  47   1        
+  48   1        LED = 1;
+  49   1        
+  50   1        Uart_Init();
+  51   1        EA = 1;
+  52   1        Uart_SendStr("Hello World\r\n");
+  53   1        
+C51 COMPILER V9.60.0.0   MAIN                                                              02/12/2023 20:42:34 PAGE 2   
+
+  54   1        RF24_Init();
+  55   1        RF24_Write_Reg(WRITE_REG + EN_AA,0x00);
+  56   1        RF24_Write_Reg(WRITE_REG+EN_RXADDR,0x01);
+  57   1        RF24_Write_Reg(WRITE_REG+SETUP_RETR,0x00);
+  58   1        RF24_RX_Mode();
+  59   1        //RF24_TX_Mode();
+  60   1        RF24_Set_Channel(66);
+  61   1        RF24_Set_Power(RF_PWR_0);
+  62   1        RF24_Set_P0_Size(11);
+  63   1        RF24_Set_Rate(RATE_1M_BPS);
+  64   1        RF24_Write_Buf(WRITE_REG + TX_ADDR, TX_ADDRESS, TX_ADR_WIDTH);     // 写入发送地址
+  65   1        RF24_Write_Buf(WRITE_REG + RX_ADDR_P0, TX_ADDRESS, TX_ADR_WIDTH);  // 为了应答接收设备，接收通道0地址和发
+             -送地址相同
+  66   1        delay(1000);
+  67   1        PWMA_Init();
+  68   1        PWMB_Init();
+  69   1        while(1)
+  70   1        {
+  71   2          if(IRQ == 0)
+  72   2          {
+  73   3            //uint8_t i;
+  74   3            LED = 0;
+  75   3            RF24_Read_Buf(RD_RX_PLOAD,rx,11);     //读取数据
+  76   3            CE = 0;
+  77   3            RF24_Write_Reg(WRITE_REG+STATUS,0x40);
+  78   3            CE = 1;
+  79   3            
+  80   3            /*
+  81   3            for(i = 0;i<11;i++)
+  82   3            {
+  83   3              Uart_Send(rx[i]);
+  84   3            }
+  85   3            */
+  86   3            if(rx[0] == 'D')
+  87   3            {
+  88   4              PWM_Set_Duty(CH_0,(uint16_t)(rx[1]<<3)+500);
+  89   4              PWM_Set_Duty(CH_1,(uint16_t)(rx[2]<<3)+500);
+  90   4              PWM_Set_Duty(CH_2,(uint16_t)(rx[3]<<3)+500);
+  91   4              PWM_Set_Duty(CH_3,(uint16_t)(rx[4]<<3)+500);
+  92   4              CH9 = rx[5];
+  93   4              CH10 = rx[6];
+  94   4            }
+  95   3            tx[0] = 'O';
+  96   3            tx[1] = 'K';
+  97   3            RF24_TX_Mode();
+  98   3            delay(2);
+  99   3            CE = 0;
+ 100   3            RF24_Write_Buf(WR_TX_PLOAD, tx, 11);
+ 101   3            CE = 1;
+ 102   3            delay(1);
+ 103   3            RF24_RX_Mode();
+ 104   3          }
+ 105   2          
+ 106   2          
+ 107   2          /*
+ 108   2          RF24_TX_Mode();
+ 109   2          tx[0] = 0x44;
+ 110   2          tx[1] = 'e';
+ 111   2          tx[2] = 'l';
+ 112   2          tx[3] = 'd';
+ 113   2          tx[4] = 'e';
+ 114   2          tx[5] = 'l';
+C51 COMPILER V9.60.0.0   MAIN                                                              02/12/2023 20:42:34 PAGE 3   
+
+ 115   2          tx[6] = '-';
+ 116   2          tx[7] = 'D';
+ 117   2          tx[8] = 'F';
+ 118   2          tx[9] = 'L';
+ 119   2          tx[10] = 'Y';
+ 120   2          CE = 0;
+ 121   2          RF24_Write_Buf(WR_TX_PLOAD, tx, 11);      //写数据到TX FIFO,32个字节
+ 122   2          CE = 1;
+ 123   2          delay(1);
+ 124   2          RF24_RX_Mode();
+ 125   2          delay(1000);
+ 126   2          */
+ 127   2        }
+ 128   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    338    ----
+   CONSTANT SIZE    =     14    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     22    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

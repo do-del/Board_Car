@@ -1,0 +1,8 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\RF24.obj",
+".\Objects\uart.obj",
+".\Objects\eeprom.obj",
+".\Objects\pwm.obj" 
+TO ".\Objects\Mini_Receiver" 
+PRINT(".\Listings\Mini_Receiver.m51") RAMSIZE(256) 
