@@ -39,6 +39,8 @@ MCUÍ¨¹ýUSB CDC(Communication Device Class)Ð­ÒéÊ¶±ðÎª´®¿ÚÉè±¸;
 #include "i2c.h"
 #include "mpu6050.h"
 #include "pwm.h"
+#include "rf24.h"
+#include "timer.h"
 
 #define MAIN_Fosc       24000000L   //¶¨ÒåÖ÷Ê±ÖÓ
 
@@ -49,6 +51,10 @@ char *USER_STCISPCMD = "@STCISP#";                      //ÉèÖÃ×Ô¶¯¸´Î»µ½ISPÇøµÄÓ
 //P3.2¿Ú°´¼ü¸´Î»ËùÐè±äÁ¿
 bit Key_Flag;
 u16 Key_cnt;
+
+bit rx_flag = 1;
+unsigned char rx[11] = {0};
+unsigned char tx[11] = {'O','K',0};
 
 mpu6050_struct mpu_dat;
 
@@ -81,6 +87,51 @@ void I2C_Scan(void)
 #endif
 }
 
+void update_1ms(void)
+{
+	if(rx_flag)
+	{
+		if(RF24_IRQ == 0)
+		{
+			//uint8_t i;
+			RF24_Read_Buf(RD_RX_PLOAD,rx,11);     //¶ÁÈ¡Êý¾Ý
+			CE_LOW();
+			RF24_Write_Reg(WRITE_REG+STATUS,0x40);
+			CE_HIGH();
+			
+			/*
+			for(i = 0;i<11;i++)
+			{
+				Uart_Send(rx[i]);
+			}
+			*/
+			printf("rx:%c\r\n", rx[0]);
+			if(rx[0] == 'D')
+			{
+				/*
+				PWM_Set_Duty(CH_0,(uint16_t)(rx[1]<<3)+500);
+				PWM_Set_Duty(CH_1,(uint16_t)(rx[2]<<3)+500);
+				PWM_Set_Duty(CH_2,(uint16_t)(rx[3]<<3)+500);
+				PWM_Set_Duty(CH_3,(uint16_t)(rx[4]<<3)+500);
+				CH9 = rx[5];
+				CH10 = rx[6];
+				*/
+			}
+			rx_flag = 0;
+			RF24_TX_Mode();
+		}
+	}
+	else
+	{
+		CE_LOW();
+		RF24_Write_Buf(WR_TX_PLOAD, tx, 11);
+		CE_HIGH();
+		delay_ms(1);
+		rx_flag = 1;
+		RF24_RX_Mode();
+	}
+}
+
 void main()
 {
 	sys_init();  //ÏµÍ³³õÊ¼»¯
@@ -101,6 +152,8 @@ void main()
 	printf("---------STC32 Debug----------\r\n");
 	//I2C_Scan();
 	//mpu6050_init();
+	
+	//PWM³õÊ¼»¯
 	pwm_init();
 	pwma_setcycle(1000);
 	pwm1_setduty(300);
@@ -109,6 +162,22 @@ void main()
 	pwm4p_enable();
 	pwm1n_enable();
 	pwm4n_enable();
+	
+	//RF24³õÊ¼»¯²¢½øÈëRXÄ£Ê½
+	RF24_Init();
+	RF24_Write_Reg(WRITE_REG + EN_AA,0x00);
+	RF24_Write_Reg(WRITE_REG+EN_RXADDR,0x01);
+	RF24_Write_Reg(WRITE_REG+SETUP_RETR,0x00);
+	RF24_RX_Mode();
+	//RF24_TX_Mode();
+	RF24_Set_Channel(66);
+	RF24_Set_Power(RF_PWR_0);
+	RF24_Set_P0_Size(11);
+	RF24_Set_Rate(RATE_1M_BPS);
+	RF24_Write_Buf(WRITE_REG + TX_ADDR, TX_ADDRESS, TX_ADR_WIDTH);     // Ð´Èë·¢ËÍµØÖ·
+	RF24_Write_Buf(WRITE_REG + RX_ADDR_P0, TX_ADDRESS, TX_ADR_WIDTH);  // ÎªÁËÓ¦´ð½ÓÊÕÉè±¸£¬½ÓÊÕÍ¨µÀ0µØÖ·ºÍ·¢ËÍµØÖ·ÏàÍ¬
+	rx_flag = 1;
+	
 	P20 = 1;
 	
 	while (1)
@@ -149,6 +218,8 @@ void sys_init()
 	Debug_Init();	//µ÷ÊÔ¿Ú³õÊ¼»¯
 	
 	I2C_Init();
+	
+	timer0_init(1000, update_1ms);
 }
 
 //========================================================================

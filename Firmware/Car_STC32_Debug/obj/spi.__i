@@ -1,0 +1,1 @@
+"Del\spi.c" XSMALL INTR2 BROWSE INCDIR(.\Del;.\src) DEBUG PRINT(.\obj\spi.lst) TABS (2) OBJECT(.\obj\spi.obj)

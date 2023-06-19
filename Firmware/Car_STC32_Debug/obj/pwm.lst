@@ -1,9 +1,9 @@
-C251 COMPILER V5.60.0,  pwm                                                                18/06/23  10:11:36  PAGE 1   
+C251 COMPILER V5.60.0,  pwm                                                                19/06/23  14:54:31  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE pwm
 OBJECT MODULE PLACED IN .\obj\pwm.obj
-COMPILER INVOKED BY: D:\Keil_v251\C251\BIN\C251.EXE Del\pwm.c XSMALL INTR2 BROWSE INCDIR(.\Del;.\src) DEBUG PRINT(.\obj\
+COMPILER INVOKED BY: C:\Keil_c251\C251\BIN\C251.EXE Del\pwm.c XSMALL INTR2 BROWSE INCDIR(.\Del;.\src) DEBUG PRINT(.\obj\
                     -pwm.lst) TABS(2) OBJECT(.\obj\pwm.obj) 
 
 stmt  level    source
@@ -66,7 +66,7 @@ stmt  level    source
    56          {
    57   1        PWMA_ENO &= ~(0x01<<1);
    58   1        PWM1N_PIN = 0;
-C251 COMPILER V5.60.0,  pwm                                                                18/06/23  10:11:36  PAGE 2   
+C251 COMPILER V5.60.0,  pwm                                                                19/06/23  14:54:31  PAGE 2   
 
    59   1      }
    60          
@@ -134,7 +134,7 @@ stmt  level    source
   122          {
   123   1        PWMA_CCER2 = 0x00;  //写CCMRx前需要清零CCERx
   124   1        PWMA_CCMR4 = 0x60;  //PWM1模式
-C251 COMPILER V5.60.0,  pwm                                                                18/06/23  10:11:36  PAGE 3   
+C251 COMPILER V5.60.0,  pwm                                                                19/06/23  14:54:31  PAGE 3   
 
   125   1        
   126   1        PWMA_CCER2= 0x01 << 4;  //OC4输出使能

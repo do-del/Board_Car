@@ -1,0 +1,57 @@
+C251 COMPILER V5.60.0,  spi                                                                19/06/23  16:27:01  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE spi
+OBJECT MODULE PLACED IN .\obj\spi.obj
+COMPILER INVOKED BY: C:\Keil_c251\C251\BIN\C251.EXE Del\spi.c XSMALL INTR2 BROWSE INCDIR(.\Del;.\src) DEBUG PRINT(.\obj\
+                    -spi.lst) TABS(2) OBJECT(.\obj\spi.obj) 
+
+stmt  level    source
+
+    1          #include "spi.h"
+    2          
+    3          void spi_init(void)
+    4          {
+    5   1        SCK = 0;
+    6   1      }
+    7          
+    8          unsigned char SPI_RW(unsigned char byte)
+    9          {
+   10   1        unsigned char i;
+   11   1        for(i = 0; i < 8; i++)
+   12   1        {
+   13   2          if(byte & 0x80)
+   14   2            MOSI = 1;
+   15   2          else
+   16   2            MOSI = 0;
+   17   2          byte <<= 1;
+   18   2          SCK = 1;
+   19   2          byte |= MISO;
+   20   2          SCK = 0;
+   21   2        }
+   22   1        return byte;
+   23   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =        38     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =    ------     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =    ------     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

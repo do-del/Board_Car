@@ -1,0 +1,1 @@
+"Del\rf24.c" XSMALL INTR2 BROWSE INCDIR(.\Del;.\src) DEBUG PRINT(.\obj\rf24.lst) TABS (2) OBJECT(.\obj\rf24.obj)

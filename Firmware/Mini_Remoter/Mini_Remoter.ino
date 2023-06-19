@@ -86,6 +86,7 @@ ISR(TIMER1_COMPA_vect)
     rx_count--;
     if(rx_count == 0)
     {
+      connect_flag = false; 
       connect_state = CONNECT_TX;
     } 
   }

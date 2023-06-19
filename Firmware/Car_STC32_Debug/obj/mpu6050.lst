@@ -1,9 +1,9 @@
-C251 COMPILER V5.60.0,  mpu6050                                                            17/06/23  22:13:45  PAGE 1   
+C251 COMPILER V5.60.0,  mpu6050                                                            19/06/23  14:54:31  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE mpu6050
 OBJECT MODULE PLACED IN .\obj\mpu6050.obj
-COMPILER INVOKED BY: D:\Keil_v251\C251\BIN\C251.EXE Del\mpu6050.c XSMALL INTR2 BROWSE INCDIR(.\Del;.\src) DEBUG PRINT(.\
+COMPILER INVOKED BY: C:\Keil_c251\C251\BIN\C251.EXE Del\mpu6050.c XSMALL INTR2 BROWSE INCDIR(.\Del;.\src) DEBUG PRINT(.\
                     -obj\mpu6050.lst) TABS(2) OBJECT(.\obj\mpu6050.obj) 
 
 stmt  level    source

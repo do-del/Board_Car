@@ -1,9 +1,9 @@
-C251 COMPILER V5.60.0,  debug                                                              17/06/23  07:44:00  PAGE 1   
+C251 COMPILER V5.60.0,  debug                                                              19/06/23  14:54:30  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE debug
 OBJECT MODULE PLACED IN .\obj\debug.obj
-COMPILER INVOKED BY: D:\Keil_v251\C251\BIN\C251.EXE Del\debug.c XSMALL INTR2 BROWSE INCDIR(.\Del;.\src) DEBUG PRINT(.\ob
+COMPILER INVOKED BY: C:\Keil_c251\C251\BIN\C251.EXE Del\debug.c XSMALL INTR2 BROWSE INCDIR(.\Del;.\src) DEBUG PRINT(.\ob
                     -j\debug.lst) TABS(2) OBJECT(.\obj\debug.obj) 
 
 stmt  level    source

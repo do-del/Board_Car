@@ -1,0 +1,1 @@
+"Del\timer.c" XSMALL INTR2 BROWSE INCDIR(.\Del;.\src) DEBUG PRINT(.\obj\timer.lst) TABS (2) OBJECT(.\obj\timer.obj)

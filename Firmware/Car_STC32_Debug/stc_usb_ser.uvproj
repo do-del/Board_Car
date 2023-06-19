@@ -354,6 +354,21 @@
               <FileType>1</FileType>
               <FilePath>.\Del\pwm.c</FilePath>
             </File>
+            <File>
+              <FileName>spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Del\spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>rf24.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Del\rf24.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Del\timer.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

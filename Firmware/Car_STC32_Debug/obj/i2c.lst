@@ -1,9 +1,9 @@
-C251 COMPILER V5.60.0,  i2c                                                                17/06/23  22:17:47  PAGE 1   
+C251 COMPILER V5.60.0,  i2c                                                                19/06/23  14:54:31  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE i2c
 OBJECT MODULE PLACED IN .\obj\i2c.obj
-COMPILER INVOKED BY: D:\Keil_v251\C251\BIN\C251.EXE Del\i2c.c XSMALL INTR2 BROWSE INCDIR(.\Del;.\src) DEBUG PRINT(.\obj\
+COMPILER INVOKED BY: C:\Keil_c251\C251\BIN\C251.EXE Del\i2c.c XSMALL INTR2 BROWSE INCDIR(.\Del;.\src) DEBUG PRINT(.\obj\
                     -i2c.lst) TABS(2) OBJECT(.\obj\i2c.obj) 
 
 stmt  level    source
@@ -66,7 +66,7 @@ stmt  level    source
    56   1      }
    57          
    58          void I2C_Init(void)
-C251 COMPILER V5.60.0,  i2c                                                                17/06/23  22:17:47  PAGE 2   
+C251 COMPILER V5.60.0,  i2c                                                                19/06/23  14:54:31  PAGE 2   
 
    59          {
    60   1        P1PU |= 0x30; //0x00110000
@@ -135,7 +135,7 @@ Module Information          Static   Overlayable
   bitaddressable size  =    ------     ------
   ebitaddressable size =    ------     ------
   far data size        =    ------     ------
-C251 COMPILER V5.60.0,  i2c                                                                17/06/23  22:17:47  PAGE 3   
+C251 COMPILER V5.60.0,  i2c                                                                19/06/23  14:54:31  PAGE 3   
 
   huge data size       =    ------     ------
   const size           =    ------     ------
