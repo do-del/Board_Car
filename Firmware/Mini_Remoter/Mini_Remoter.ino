@@ -34,13 +34,21 @@ void connect_check();
 
 uint16_t tim1_cnt = 0;
 uint16_t rx_count = 0;
+uint8_t rx_flag = 0;
+
 void timer1_config();
+
 ISR(TIMER1_COMPA_vect)
 {
   btn_left.tick();
   btn_right.tick();
   //rx_count--;
   // tim1_cnt++;
+  if(rx_flag)
+  {
+    RF24_RX_Mode();
+    rx_flag = 0;
+  }
   if(connect_state)
   {
     // if(tim1_cnt>=20)
@@ -63,7 +71,8 @@ ISR(TIMER1_COMPA_vect)
       CE_HIGH();
       //delay(1);
       rx_count = 50;
-      RF24_RX_Mode();
+      rx_flag = 1;
+      //RF24_RX_Mode();
       connect_state = CONNECT_RX;
     // }
   }

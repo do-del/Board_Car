@@ -1,4 +1,4 @@
-C251 COMPILER V5.60.0,  rf24                                                               19/06/23  16:10:28  PAGE 1   
+C251 COMPILER V5.60.0,  rf24                                                               20/06/23  10:07:46  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE rf24
@@ -66,7 +66,7 @@ stmt  level    source
    56   1      }                            
    57          
    58          
-C251 COMPILER V5.60.0,  rf24                                                               19/06/23  16:10:28  PAGE 2   
+C251 COMPILER V5.60.0,  rf24                                                               20/06/23  10:07:46  PAGE 2   
 
    59          /********************************************************
    60          函数功能：读取寄存器的值（单字节）                  
@@ -134,7 +134,7 @@ stmt  level    source
   120          入口参数：无
   121          返回  值：无
   122          *********************************************************/
-C251 COMPILER V5.60.0,  rf24                                                               19/06/23  16:10:28  PAGE 3   
+C251 COMPILER V5.60.0,  rf24                                                               20/06/23  10:07:46  PAGE 3   
 
   123          void RF24_TX_Mode(void)
   124          {
@@ -149,104 +149,105 @@ stmt  level    source
   132   1        // RF24_Write_Reg(WRITE_REG + RF_CH, 40);                               // 选择射频通道0x40
   133   1        // RF24_Write_Reg(WRITE_REG + RF_SETUP, 0x0f);                          // 数据传输率2Mbps，发射功率7dBm
   134   1        RF24_Write_Reg(WRITE_REG + CONFIG, 0x0e);                           // CRC使能，16位CRC校验，上电
-  135   1        CE_HIGH();  //CE = 1;
-  136   1      }
-  137          
+  135   1        RF24_Write_Reg(WRITE_REG + STATUS, 0xff);
+  136   1        CE_HIGH();  //CE = 1;
+  137   1      }
   138          
-  139          /********************************************************
-  140          函数功能：读取接收数据                       
-  141          入口参数：rxbuf:接收数据存放首地址
-  142          返回  值：0:接收到数据
-  143                    1:没有接收到数据
-  144          *********************************************************/
-  145          unsigned char RF24_RxPacket(unsigned char *rxbuf)
-  146          {
-  147   1        unsigned char state;
-  148   1        state = RF24_Read_Reg(STATUS);                         //读取状态寄存器的值       
-  149   1        RF24_Write_Reg(WRITE_REG+STATUS,state);               //清除RX_DS中断标志
-  150   1      
-  151   1        if(state & RX_DR)                                          //接收到数据
-  152   1        {
-  153   2          RF24_Read_Buf(RD_RX_PLOAD,rxbuf,11); //TX_PLOAD_WIDTH);     //读取数据
-  154   2          RF24_Write_Reg(FLUSH_RX,0xff);                        //清除RX FIFO寄存器
-  155   2          return 0; 
-  156   2        }    
-  157   1        return 1;                                                   //没收到任何数据
-  158   1      }
-  159          
+  139          
+  140          /********************************************************
+  141          函数功能：读取接收数据                       
+  142          入口参数：rxbuf:接收数据存放首地址
+  143          返回  值：0:接收到数据
+  144                    1:没有接收到数据
+  145          *********************************************************/
+  146          unsigned char RF24_RxPacket(unsigned char *rxbuf)
+  147          {
+  148   1        unsigned char state;
+  149   1        state = RF24_Read_Reg(STATUS);                         //读取状态寄存器的值       
+  150   1        RF24_Write_Reg(WRITE_REG+STATUS,state);               //清除RX_DS中断标志
+  151   1      
+  152   1        if(state & RX_DR)                                          //接收到数据
+  153   1        {
+  154   2          RF24_Read_Buf(RD_RX_PLOAD,rxbuf,11); //TX_PLOAD_WIDTH);     //读取数据
+  155   2          RF24_Write_Reg(FLUSH_RX,0xff);                        //清除RX FIFO寄存器
+  156   2          return 0; 
+  157   2        }    
+  158   1        return 1;                                                   //没收到任何数据
+  159   1      }
   160          
-  161          /********************************************************
-  162          函数功能：发送一个数据包                      
-  163          入口参数：txbuf:要发送的数据
-  164          返回  值：0x10:达到最大重发次数，发送失败 
-  165                    0x20:发送成功            
-  166                    0xff:发送失败                  
-  167          *********************************************************/
-  168          unsigned char RF24_TxPacket(unsigned char *txbuf)
-  169          {
-  170   1        unsigned char state;
-  171   1        CE_LOW();//CE=0;                                                      //CE拉低，使能RF24配置
-  172   1        RF24_Write_Buf(WR_TX_PLOAD, txbuf, TX_PLOAD_WIDTH);     //写数据到TX FIFO,32个字节
-  173   1        CE_HIGH();  //CE=1;                                                     //CE置高，使能发送     
-  174   1        
-  175   1        while(RF24_IRQ == 1);                                         //等待发送完成
-  176   1        state = RF24_Read_Reg(STATUS);                          //读取状态寄存器的值     
-  177   1        RF24_Write_Reg(WRITE_REG+STATUS, state);                //清除TX_DS或MAX_RT中断标志
-  178   1        if(state&MAX_RT)                                          //达到最大重发次数
-  179   1        {
-  180   2          RF24_Write_Reg(FLUSH_TX,0xff);                        //清除TX FIFO寄存器 
-  181   2          return MAX_RT; 
-  182   2        }
-  183   1        if(state&TX_DS)                                           //发送完成
-  184   1        {
-  185   2          return TX_DS;
-  186   2        }
-  187   1        return 0XFF;                                              //发送失败
-C251 COMPILER V5.60.0,  rf24                                                               19/06/23  16:10:28  PAGE 4   
+  161          
+  162          /********************************************************
+  163          函数功能：发送一个数据包                      
+  164          入口参数：txbuf:要发送的数据
+  165          返回  值：0x10:达到最大重发次数，发送失败 
+  166                    0x20:发送成功            
+  167                    0xff:发送失败                  
+  168          *********************************************************/
+  169          unsigned char RF24_TxPacket(unsigned char *txbuf)
+  170          {
+  171   1        unsigned char state;
+  172   1        CE_LOW();//CE=0;                                                      //CE拉低，使能RF24配置
+  173   1        RF24_Write_Buf(WR_TX_PLOAD, txbuf, TX_PLOAD_WIDTH);     //写数据到TX FIFO,32个字节
+  174   1        CE_HIGH();  //CE=1;                                                     //CE置高，使能发送     
+  175   1        
+  176   1        while(RF24_IRQ == 1);                                         //等待发送完成
+  177   1        state = RF24_Read_Reg(STATUS);                          //读取状态寄存器的值     
+  178   1        RF24_Write_Reg(WRITE_REG+STATUS, state);                //清除TX_DS或MAX_RT中断标志
+  179   1        if(state&MAX_RT)                                          //达到最大重发次数
+  180   1        {
+  181   2          RF24_Write_Reg(FLUSH_TX,0xff);                        //清除TX FIFO寄存器 
+  182   2          return MAX_RT; 
+  183   2        }
+  184   1        if(state&TX_DS)                                           //发送完成
+  185   1        {
+  186   2          return TX_DS;
+  187   2        }
+C251 COMPILER V5.60.0,  rf24                                                               20/06/23  10:07:46  PAGE 4   
 
-  188   1      }
-  189          
-  190          void RF24_Set_Power(unsigned char p)
-  191          {
-  192   1        unsigned char temp;
-  193   1        CE_LOW();
-  194   1        temp = RF24_Read_Reg(RF_SETUP);
-  195   1        temp &= ~0x07;
-  196   1        temp |= p;
-  197   1        RF24_Write_Reg(WRITE_REG+RF_SETUP,temp);
-  198   1        CE_HIGH();
-  199   1      }
-  200          
-  201          void RF24_Set_Channel(unsigned char ch)
-  202          {
-  203   1        CE_LOW();
-  204   1        RF24_Write_Reg(WRITE_REG + RF_CH,ch);
-  205   1        CE_HIGH();
-  206   1      }
-  207          
-  208          void RF24_Set_Rate(unsigned char rate)
-  209          {
-  210   1        unsigned char temp;
-  211   1        CE_LOW();
-  212   1        temp = RF24_Read_Reg(RF_SETUP);
-  213   1        temp &= 0xd7; //0b1101 0111
-  214   1        temp |= (rate&0x01)<<3;
-  215   1        temp |= (rate&0x02)<<4;
-  216   1        RF24_Write_Reg(WRITE_REG+RF_SETUP,temp);
-  217   1        CE_HIGH();
-  218   1      }
-  219          
-  220          void RF24_Set_P0_Size(unsigned char len)
-  221          {
-  222   1        CE_LOW();
-  223   1        RF24_Write_Reg(WRITE_REG + RX_PW_P0,len);
-  224   1        CE_HIGH();
-  225   1      }
+  188   1        return 0XFF;                                              //发送失败
+  189   1      }
+  190          
+  191          void RF24_Set_Power(unsigned char p)
+  192          {
+  193   1        unsigned char temp;
+  194   1        CE_LOW();
+  195   1        temp = RF24_Read_Reg(RF_SETUP);
+  196   1        temp &= ~0x07;
+  197   1        temp |= p;
+  198   1        RF24_Write_Reg(WRITE_REG+RF_SETUP,temp);
+  199   1        CE_HIGH();
+  200   1      }
+  201          
+  202          void RF24_Set_Channel(unsigned char ch)
+  203          {
+  204   1        CE_LOW();
+  205   1        RF24_Write_Reg(WRITE_REG + RF_CH,ch);
+  206   1        CE_HIGH();
+  207   1      }
+  208          
+  209          void RF24_Set_Rate(unsigned char rate)
+  210          {
+  211   1        unsigned char temp;
+  212   1        CE_LOW();
+  213   1        temp = RF24_Read_Reg(RF_SETUP);
+  214   1        temp &= 0xd7; //0b1101 0111
+  215   1        temp |= (rate&0x01)<<3;
+  216   1        temp |= (rate&0x02)<<4;
+  217   1        RF24_Write_Reg(WRITE_REG+RF_SETUP,temp);
+  218   1        CE_HIGH();
+  219   1      }
+  220          
+  221          void RF24_Set_P0_Size(unsigned char len)
+  222          {
+  223   1        CE_LOW();
+  224   1        RF24_Write_Reg(WRITE_REG + RX_PW_P0,len);
+  225   1        CE_HIGH();
+  226   1      }
 
 
 Module Information          Static   Overlayable
 ------------------------------------------------
-  code size            =       419     ------
+  code size            =       427     ------
   ecode size           =    ------     ------
   data size            =    ------     ------
   idata size           =    ------     ------

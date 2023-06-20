@@ -1,0 +1,54 @@
+C251 COMPILER V5.60.0,  debug                                                              19/06/23  14:54:30  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE debug
+OBJECT MODULE PLACED IN .\obj\debug.obj
+COMPILER INVOKED BY: C:\Keil_c251\C251\BIN\C251.EXE Del\debug.c XSMALL INTR2 BROWSE INCDIR(.\Del;.\src) DEBUG PRINT(.\ob
+                    -j\debug.lst) TABS(2) OBJECT(.\obj\debug.obj) 
+
+stmt  level    source
+
+    1          #include "debug.h"
+    2          #include "stc.h"
+    3          #include "usb.h"
+    4          
+    5          void Debug_Init(void)
+    6          {
+    7   1        #if DEBUG_ENABLE
+    8   1        //====== USB ≥ı ºªØ ======
+    9   1        P3M0 &= ~0x03;
+   10   1        P3M1 |= 0x03;
+   11   1        
+   12   1        IRC48MCR = 0x80;
+   13   1        while (!(IRC48MCR & 0x01));
+   14   1        
+   15   1        USBCLK = 0x00;
+   16   1        USBCON = 0x90;
+   17   1        //========================
+   18   1        #endif
+   19   1      }
+   20          
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =        40     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =    ------     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =    ------     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,187 @@
+C251 COMPILER V5.60.0,  pwm                                                                19/06/23  14:54:31  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE pwm
+OBJECT MODULE PLACED IN .\obj\pwm.obj
+COMPILER INVOKED BY: C:\Keil_c251\C251\BIN\C251.EXE Del\pwm.c XSMALL INTR2 BROWSE INCDIR(.\Del;.\src) DEBUG PRINT(.\obj\
+                    -pwm.lst) TABS(2) OBJECT(.\obj\pwm.obj) 
+
+stmt  level    source
+
+    1          #include "pwm.h"
+    2          
+    3          void pwm_init(void)
+    4          {
+    5   1        PWMA_CCER1 = 0x00;
+    6   1        PWMA_CCER2 = 0x00;
+    7   1        PWMA_CCMR1 = 0x60;
+    8   1        PWMA_CCMR4 = 0x60;
+    9   1        
+   10   1        PWMA_PSCRH = 0x00;
+   11   1        PWMA_PSCRL = 0x17;
+   12   1        
+   13   1        PWMA_BKR = 0x80;
+   14   1        PWMA_CR1 = 0x01;
+   15   1      }
+   16          
+   17          void pwm1p_enable(void)
+   18          {
+   19   1        pwm1n_disable();
+   20   1        PWM1N_PIN = 0;
+   21   1        PWMA_CCER1 = 0x01;
+   22   1        PWMA_ENO |= 0x01;
+   23   1      }
+   24          
+   25          void pwm1n_enable(void)
+   26          {
+   27   1        pwm1p_disable();
+   28   1        PWM1P_PIN = 0;
+   29   1        PWMA_CCER1 = 0x01<<2;
+   30   1        PWMA_ENO |= (0x01<<1);
+   31   1      }
+   32          
+   33          void pwm4p_enable(void)
+   34          {
+   35   1        pwm4n_disable();
+   36   1        PWM4N_PIN = 0;
+   37   1        PWMA_CCER2 = 0x01 << 4;
+   38   1        PWMA_ENO |= (0x01<<6);
+   39   1      }
+   40          
+   41          void pwm4n_enable(void)
+   42          {
+   43   1        pwm4p_disable();
+   44   1        PWM4P_PIN = 0;
+   45   1        PWMA_CCER2 = 0x01 << 6;
+   46   1        PWMA_ENO |= (0x01<<7);
+   47   1      }
+   48          
+   49          void pwm1p_disable(void)
+   50          {
+   51   1        PWMA_ENO &= ~(0x01);
+   52   1        PWM1P_PIN = 0;
+   53   1      }
+   54          
+   55          void pwm1n_disable(void)
+   56          {
+   57   1        PWMA_ENO &= ~(0x01<<1);
+   58   1        PWM1N_PIN = 0;
+C251 COMPILER V5.60.0,  pwm                                                                19/06/23  14:54:31  PAGE 2   
+
+   59   1      }
+   60          
+   61          void pwm4p_disable(void)
+   62          {
+   63   1        PWMA_ENO &= ~(0x01<<6);
+   64   1        PWM4P_PIN = 0;
+   65   1      }
+   66          
+   67          void pwm4n_disable(void)
+   68          {
+   69   1        PWMA_ENO &= ~(0x01<<7);
+   70   1        PWM4N_PIN = 0;
+   71   1      }
+   72          
+   73          void pwma_setcycle(unsigned int cycle)
+   74          {
+   75   1        PWMA_ARRH = (cycle>>8) & 0xff;
+   76   1        PWMA_ARRL = cycle & 0xff;
+   77   1      }
+   78          
+   79          void pwm1_setduty(unsigned int duty)
+   80          {
+   81   1        PWMA_CCR1H = (duty>>8) & 0xff;
+   82   1        PWMA_CCR1L = duty & 0xff;
+   83   1      }
+   84          
+   85          void pwm4_setduty(unsigned int duty)
+   86          {
+   87   1        PWMA_CCR4H = (duty>>8) & 0xff;
+   88   1        PWMA_CCR4L = (duty>>8) & 0xff;
+   89   1      }
+   90          
+   91          void pwm1p_config(void)
+   92          {
+   93   1        PWMA_CCER1 = 0x00;  //写CCMRx前需要清零CCERx
+   94   1        PWMA_CCMR1 = 0x60;  //PWM1模式
+   95   1        
+   96   1        PWMA_CCER1 = 0x01;  //OC1输出使能
+   97   1        PWMA_CCR1H = 0x01;  //捕获/比较寄存器
+   98   1        PWMA_CCR1L = 0x00;
+   99   1        PWMA_ARRH = 0x02; //自动重装载寄存器
+  100   1        PWMA_ARRL = 0x00;
+  101   1        PWMA_ENO = 0x01;  //输出使能寄存器
+  102   1        PWMA_BKR = 0x80;
+  103   1        PWMA_CR1 = 0x01;  //控制寄存器，开启计数器
+  104   1      }
+  105          
+  106          void pwm1n_config(void)
+  107          {
+  108   1        PWMA_CCER1 = 0x00;
+  109   1        PWMA_CCMR1 = 0x60;
+  110   1        PWMA_CCER1 = (0x01 << 2);
+  111   1        
+  112   1        PWMA_CCR1H = 0x01;  //捕获/比较寄存器
+  113   1        PWMA_CCR1L = 0x00;
+  114   1        PWMA_ARRH = 0x02; //自动重装载寄存器
+  115   1        PWMA_ARRL = 0x00;
+  116   1        PWMA_ENO = (0x01<<1); //输出使能寄存器
+  117   1        PWMA_BKR = 0x80;
+  118   1        PWMA_CR1 = 0x01;  //控制寄存器，开启计数器
+  119   1      }
+  120          
+  121          void pwm4p_config(void)
+  122          {
+  123   1        PWMA_CCER2 = 0x00;  //写CCMRx前需要清零CCERx
+  124   1        PWMA_CCMR4 = 0x60;  //PWM1模式
+C251 COMPILER V5.60.0,  pwm                                                                19/06/23  14:54:31  PAGE 3   
+
+  125   1        
+  126   1        PWMA_CCER2= 0x01 << 4;  //OC4输出使能
+  127   1        PWMA_CCR4H = 0x01;  //捕获/比较寄存器
+  128   1        PWMA_CCR4L = 0x00;
+  129   1        PWMA_ARRH = 0x02; //自动重装载寄存器
+  130   1        PWMA_ARRL = 0x00;
+  131   1        PWMA_ENO = 0x01<<6; //输出使能寄存器
+  132   1        PWMA_BKR = 0x80;
+  133   1        PWMA_CR1 = 0x01;  //控制寄存器，开启计数器
+  134   1      }
+  135          
+  136          void pwm4n_config(void)
+  137          {
+  138   1        PWMA_CCER2 = 0x00;
+  139   1        PWMA_CCMR4 = 0x60;
+  140   1        PWMA_CCER2 = (0x01 << 6);
+  141   1        
+  142   1        PWMA_CCR4H = 0x01;  //捕获/比较寄存器
+  143   1        PWMA_CCR4L = 0x00;
+  144   1        PWMA_ARRH = 0x02; //自动重装载寄存器
+  145   1        PWMA_ARRL = 0x00;
+  146   1        PWMA_ENO = (0x01<<7); //输出使能寄存器
+  147   1        PWMA_BKR = 0x80;
+  148   1        PWMA_CR1 = 0x01;  //控制寄存器，开启计数器
+  149   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =       698     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =    ------     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =    ------     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

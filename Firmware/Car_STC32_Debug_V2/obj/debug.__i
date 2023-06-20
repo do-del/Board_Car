@@ -1,0 +1,1 @@
+"Del\debug.c" XSMALL INTR2 BROWSE INCDIR(.\Del;.\src) DEBUG PRINT(.\obj\debug.lst) TABS (2) OBJECT(.\obj\debug.obj)

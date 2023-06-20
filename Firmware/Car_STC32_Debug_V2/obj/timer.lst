@@ -1,0 +1,53 @@
+C251 COMPILER V5.60.0,  timer                                                              19/06/23  16:42:13  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE timer
+OBJECT MODULE PLACED IN .\obj\timer.obj
+COMPILER INVOKED BY: C:\Keil_c251\C251\BIN\C251.EXE Del\timer.c XSMALL INTR2 BROWSE INCDIR(.\Del;.\src) DEBUG PRINT(.\ob
+                    -j\timer.lst) TABS(2) OBJECT(.\obj\timer.obj) 
+
+stmt  level    source
+
+    1          #include "timer.h"
+    2          
+    3          static void (*timer0_fun)(void);
+    4          void timer0_isr() interrupt 1
+    5          {
+    6   1        timer0_fun();
+    7   1      }
+    8          
+    9          void timer0_init(unsigned int _us, void (*p)(void))
+   10          {
+   11   1        unsigned int tmp = 65536 - SYSCLK/12/_us;
+*** WARNING C188 IN LINE 11 OF Del\timer.c: 'initialization': value truncated
+   12   1        TMOD = 0x00;
+   13   1        TH0= (tmp >> 8) & 0xff;
+   14   1        TL0 = tmp & 0xff;
+   15   1        TR0 = 1;
+   16   1        ET0 = 1;
+   17   1        timer0_fun = p;
+   18   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =       103     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =         2     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =    ------     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

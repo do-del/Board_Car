@@ -1,0 +1,14 @@
+".\obj\main.obj",
+".\src\stc_usb_cdc_32g.LIB",
+".\obj\debug.obj",
+".\obj\i2c.obj",
+".\obj\mpu6050.obj",
+".\obj\pwm.obj",
+".\obj\spi.obj",
+".\obj\rf24.obj",
+".\obj\timer.obj",
+".\obj\ISR.obj" 
+TO ".\obj\stc_usb_ser" 
+PRINT(".\obj\stc_usb_ser.map") CASE DISABLEWARNING (57) 
+CLASSES (EDATA (0x0-0xFFF), 
+HDATA (0x0-0xFFF)) 

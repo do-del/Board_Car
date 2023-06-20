@@ -1,4 +1,4 @@
-C251 COMPILER V5.60.0,  main                                                               19/06/23  16:47:43  PAGE 1   
+C251 COMPILER V5.60.0,  main                                                               20/06/23  10:07:46  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE main
@@ -65,86 +65,86 @@ stmt  level    source
    53          u16 Key_cnt;
    54          
    55          bit rx_flag = 1;
-   56          unsigned char rx[11] = {0};
-C251 COMPILER V5.60.0,  main                                                               19/06/23  16:47:43  PAGE 2   
+   56          bit txc_flag = 0;
+C251 COMPILER V5.60.0,  main                                                               20/06/23  10:07:46  PAGE 2   
 
-   57          unsigned char tx[11] = {'O','K',0};
-   58          
-   59          mpu6050_struct mpu_dat;
-   60          
-   61          void sys_init();
-   62          void delay_ms(u8 ms);
-   63          void KeyResetScan(void);
-   64          
-   65          void I2C_Scan(void)
-   66          {
-   67   1      #if DEBUG_ENABLE
-   68   1        unsigned char addr_test;
-   69   1        unsigned char flag = 0;
-   70   1        
-   71   1        printf("i2c scan start...\r\n");
-   72   1        
-   73   1        for(addr_test = 0; addr_test < 200; addr_test++)
-   74   1        {
-   75   2          I2C_Start();
-   76   2          if(!I2C_SendByte(addr_test<<1)) flag = 1;
-   77   2          I2C_Stop();
-   78   2          if(flag)
-   79   2          {
-   80   3            flag = 0;
-   81   3            printf("Find addr: %X\r\n", addr_test);
-   82   3          }
-   83   2        }
-   84   1        
-   85   1        printf("i2c scan done\r\n");
-   86   1        
-   87   1      #endif
-   88   1      }
-   89          
-   90          void update_1ms(void)
-   91          {
-   92   1        if(rx_flag)
-   93   1        {
-   94   2          if(RF24_IRQ == 0)
-   95   2          {
-   96   3            //uint8_t i;
-   97   3            RF24_Read_Buf(RD_RX_PLOAD,rx,11);     //¶ÁÈ¡Êý¾Ý
-   98   3            CE_LOW();
-   99   3            RF24_Write_Reg(WRITE_REG+STATUS,0x40);
-  100   3            CE_HIGH();
-  101   3            
-  102   3            /*
-  103   3            for(i = 0;i<11;i++)
-  104   3            {
-  105   3              Uart_Send(rx[i]);
-  106   3            }
-  107   3            */
-  108   3            printf("rx:%c\r\n", rx[0]);
-  109   3            if(rx[0] == 'D')
-  110   3            {
-  111   4              /*
-  112   4              PWM_Set_Duty(CH_0,(uint16_t)(rx[1]<<3)+500);
-  113   4              PWM_Set_Duty(CH_1,(uint16_t)(rx[2]<<3)+500);
-  114   4              PWM_Set_Duty(CH_2,(uint16_t)(rx[3]<<3)+500);
-  115   4              PWM_Set_Duty(CH_3,(uint16_t)(rx[4]<<3)+500);
-  116   4              CH9 = rx[5];
-  117   4              CH10 = rx[6];
-  118   4              */
-  119   4            }
-  120   3            rx_flag = 0;
-  121   3            RF24_TX_Mode();
-  122   3          }
-C251 COMPILER V5.60.0,  main                                                               19/06/23  16:47:43  PAGE 3   
+   57          unsigned char rx[11] = {0};
+   58          unsigned char tx[11] = {'O','K',0};
+   59          
+   60          mpu6050_struct mpu_dat;
+   61          
+   62          void sys_init();
+   63          void delay_ms(u8 ms);
+   64          void KeyResetScan(void);
+   65          
+   66          void I2C_Scan(void)
+   67          {
+   68   1      #if DEBUG_ENABLE
+   69   1        unsigned char addr_test;
+   70   1        unsigned char flag = 0;
+   71   1        
+   72   1        printf("i2c scan start...\r\n");
+   73   1        
+   74   1        for(addr_test = 0; addr_test < 200; addr_test++)
+   75   1        {
+   76   2          I2C_Start();
+   77   2          if(!I2C_SendByte(addr_test<<1)) flag = 1;
+   78   2          I2C_Stop();
+   79   2          if(flag)
+   80   2          {
+   81   3            flag = 0;
+   82   3            printf("Find addr: %X\r\n", addr_test);
+   83   3          }
+   84   2        }
+   85   1        
+   86   1        printf("i2c scan done\r\n");
+   87   1        
+   88   1      #endif
+   89   1      }
+   90          
+   91          void update_1ms(void)
+   92          {
+   93   1        if(txc_flag)
+   94   1        {
+   95   2          RF24_RX_Mode();
+   96   2          txc_flag = 0;
+   97   2        }
+   98   1        if(rx_flag)
+   99   1        {
+  100   2          if(RF24_IRQ == 0)
+  101   2          {
+  102   3            RF24_Read_Buf(RD_RX_PLOAD,rx,11);     //¶ÁÈ¡Êý¾Ý
+  103   3            CE_LOW();
+  104   3            RF24_Write_Reg(WRITE_REG+STATUS,0x40);
+  105   3            CE_HIGH();
+  106   3            
+  107   3            //printf("rx:%c\r\n", rx[0]);
+  108   3            //if(rx[0] == 'D')
+  109   3            //{
+  110   3              /*
+  111   3              PWM_Set_Duty(CH_0,(uint16_t)(rx[1]<<3)+500);
+  112   3              PWM_Set_Duty(CH_1,(uint16_t)(rx[2]<<3)+500);
+  113   3              PWM_Set_Duty(CH_2,(uint16_t)(rx[3]<<3)+500);
+  114   3              PWM_Set_Duty(CH_3,(uint16_t)(rx[4]<<3)+500);
+  115   3              CH9 = rx[5];
+  116   3              CH10 = rx[6];
+  117   3              */
+  118   3            //}
+  119   3            rx_flag = 0;
+  120   3            RF24_TX_Mode();
+  121   3          }
+  122   2        }
+C251 COMPILER V5.60.0,  main                                                               20/06/23  10:07:46  PAGE 3   
 
-  123   2        }
-  124   1        else
-  125   1        {
-  126   2          CE_LOW();
-  127   2          RF24_Write_Buf(WR_TX_PLOAD, tx, 11);
-  128   2          CE_HIGH();
-  129   2          delay_ms(1);
-  130   2          rx_flag = 1;
-  131   2          RF24_RX_Mode();
+  123   1        else
+  124   1        {
+  125   2          CE_LOW();
+  126   2          RF24_Write_Buf(WR_TX_PLOAD, tx, 11);
+  127   2          CE_HIGH();
+  128   2          //delay_ms(1);
+  129   2          rx_flag = 1;
+  130   2          txc_flag = 1;
+  131   2          //RF24_RX_Mode();
   132   2        }
   133   1      }
   134          
@@ -154,155 +154,153 @@ stmt  level    source
   138   1        usb_init();  //USB CDC ½Ó¿ÚÅäÖÃ
   139   1        EA = 1;
   140   1        
-  141   1        while(DeviceState != DEVSTATE_CONFIGURED); //µÈ´ýUSBÍê³ÉÅäÖÃ
-  142   1        
-  143   1        P20 = 0;
-  144   1        P21= 0;
-  145   1        P3PU |= 0x08;
+  141   1        P53 = 0;
+  142   1        while(DeviceState != DEVSTATE_CONFIGURED); //µÈ´ýUSBÍê³ÉÅäÖÃ
+  143   1        //P3PU |= 0x08;
+  144   1        delay_ms(200);
+  145   1        delay_ms(200);
   146   1        delay_ms(200);
   147   1        delay_ms(200);
   148   1        delay_ms(200);
-  149   1        delay_ms(200);
-  150   1        delay_ms(200);
-  151   1        P21 = 1;
-  152   1        printf("---------STC32 Debug----------\r\n");
-  153   1        //I2C_Scan();
-  154   1        //mpu6050_init();
-  155   1        
-  156   1        //PWM³õÊ¼»¯
-  157   1        pwm_init();
-  158   1        pwma_setcycle(1000);
-  159   1        pwm1_setduty(300);
-  160   1        pwm4_setduty(300);
-  161   1        pwm1p_enable();
-  162   1        pwm4p_enable();
-  163   1        pwm1n_enable();
-  164   1        pwm4n_enable();
-  165   1        
-  166   1        //RF24³õÊ¼»¯²¢½øÈëRXÄ£Ê½
-  167   1        RF24_Init();
-  168   1        RF24_Write_Reg(WRITE_REG + EN_AA,0x00);
-  169   1        RF24_Write_Reg(WRITE_REG+EN_RXADDR,0x01);
-  170   1        RF24_Write_Reg(WRITE_REG+SETUP_RETR,0x00);
-  171   1        RF24_RX_Mode();
-  172   1        //RF24_TX_Mode();
-  173   1        RF24_Set_Channel(66);
-  174   1        RF24_Set_Power(RF_PWR_0);
-  175   1        RF24_Set_P0_Size(11);
-  176   1        RF24_Set_Rate(RATE_1M_BPS);
-  177   1        RF24_Write_Buf(WRITE_REG + TX_ADDR, TX_ADDRESS, TX_ADR_WIDTH);     // Ð´Èë·¢ËÍµØÖ·
-  178   1        RF24_Write_Buf(WRITE_REG + RX_ADDR_P0, TX_ADDRESS, TX_ADR_WIDTH);  // ÎªÁËÓ¦´ð½ÓÊÕÉè±¸£¬½ÓÊÕÍ¨µÀ0µØÖ·ºÍ·
-             -¢ËÍµØÖ·ÏàÍ¬
-  179   1        rx_flag = 1;
-  180   1        
-  181   1        P20 = 1;
-  182   1        
-  183   1        while (1)
-  184   1        {
-  185   2          delay_ms(1);
-  186   2          KeyResetScan();   //³¤°´P3.2¿Ú°´¼ü´¥·¢Èí¼þ¸´Î»£¬½øÈëUSBÏÂÔØÄ£Ê½£¬²»ÐèÒª´Ë¹¦ÄÜ¿ÉÉ¾³ý±¾ÐÐ´úÂë
-  187   2          
-C251 COMPILER V5.60.0,  main                                                               19/06/23  16:47:43  PAGE 4   
-
-  188   2          if(DeviceState != DEVSTATE_CONFIGURED)  //µÈ´ýUSBÍê³ÉÅäÖÃ
-  189   2            continue;
-  190   2      
-  191   2          if (bUsbOutReady)
-  192   2          {
-  193   3            usb_OUT_done();    //½ÓÊÕÓ¦´ð£¨¹Ì¶¨¸ñÊ½£©
-  194   3            
-  195   3            printf("OutNumber=0x%X\r\n",OutNumber);  //Ê¹ÓÃ printf º¯Êý´òÓ¡½ÓÊÕÊý¾Ý³¤¶È
-  196   3      
-  197   3            memcpy(UsbInBuffer, UsbOutBuffer, OutNumber);  //½«½ÓÊÕÊý¾Ý(UsbOutBuffer)£¬¸´ÖÆµ½·¢ËÍ»º³åÇø(UsbInBuffe
+  149   1        printf("---------STC32 Debug----------\r\n");
+  150   1        //I2C_Scan();
+  151   1        //mpu6050_init();
+  152   1        
+  153   1        //PWM³õÊ¼»¯
+  154   1        pwm_init();
+  155   1        pwma_setcycle(1000);
+  156   1        pwm1_setduty(300);
+  157   1        pwm4_setduty(300);
+  158   1        pwm1p_enable();
+  159   1        pwm4p_enable();
+  160   1        pwm1n_enable();
+  161   1        pwm4n_enable();
+  162   1        
+  163   1        P53 = 1;
+  164   1        
+  165   1        while (1)
+  166   1        {
+  167   2          delay_ms(1);
+  168   2          KeyResetScan();   //³¤°´P3.2¿Ú°´¼ü´¥·¢Èí¼þ¸´Î»£¬½øÈëUSBÏÂÔØÄ£Ê½£¬²»ÐèÒª´Ë¹¦ÄÜ¿ÉÉ¾³ý±¾ÐÐ´úÂë
+  169   2          
+  170   2          if(DeviceState != DEVSTATE_CONFIGURED)  //µÈ´ýUSBÍê³ÉÅäÖÃ
+  171   2            continue;
+  172   2      
+  173   2          if (bUsbOutReady)
+  174   2          {
+  175   3            usb_OUT_done();    //½ÓÊÕÓ¦´ð£¨¹Ì¶¨¸ñÊ½£©
+  176   3            
+  177   3            printf("OutNumber=0x%X\r\n",OutNumber);  //Ê¹ÓÃ printf º¯Êý´òÓ¡½ÓÊÕÊý¾Ý³¤¶È
+  178   3      
+  179   3            memcpy(UsbInBuffer, UsbOutBuffer, OutNumber);  //½«½ÓÊÕÊý¾Ý(UsbOutBuffer)£¬¸´ÖÆµ½·¢ËÍ»º³åÇø(UsbInBuffe
              -r)
-  198   3            usb_IN(OutNumber);      //Ô­Â··µ»Ø, ÓÃÓÚ²âÊÔ
-  199   3          }
-  200   2        }
-  201   1      }
-  202          
-  203          void sys_init()
-  204          {
-  205   1        WTST = 0;  //ÉèÖÃ³ÌÐòÖ¸ÁîÑÓÊ±²ÎÊý£¬¸³ÖµÎª0¿É½«CPUÖ´ÐÐÖ¸ÁîµÄËÙ¶ÈÉèÖÃÎª×î¿ì
-  206   1        EAXFR = 1; //À©Õ¹¼Ä´æÆ÷(XFR)·ÃÎÊÊ¹ÄÜ
-  207   1        CKCON = 0; //Ìá¸ß·ÃÎÊXRAMËÙ¶È
-  208   1      
-  209   1        P0M1 = 0x00;   P0M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
-  210   1        P1M1 = 0x00;   P1M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
-  211   1        P2M1 = 0x00;   P2M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
-  212   1        P3M1 = 0x00;   P3M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
-  213   1        P4M1 = 0x00;   P4M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
-  214   1        P5M1 = 0x00;   P5M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
-  215   1        P6M1 = 0x00;   P6M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
-  216   1        P7M1 = 0x00;   P7M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
-  217   1        
-  218   1        Debug_Init(); //µ÷ÊÔ¿Ú³õÊ¼»¯
-  219   1        
-  220   1        I2C_Init();
-  221   1        
-  222   1        timer0_init(1000, update_1ms);
-  223   1      }
-  224          
-  225          //========================================================================
-  226          // º¯Êý: void delay_ms(u8 ms)
-  227          // ÃèÊö: ÑÓÊ±º¯Êý¡£
-  228          // ²ÎÊý: ms,ÒªÑÓÊ±µÄmsÊý, ÕâÀïÖ»Ö§³Ö1~255ms. ×Ô¶¯ÊÊÓ¦Ö÷Ê±ÖÓ.
-  229          // ·µ»Ø: none.
-  230          // °æ±¾: VER1.0
-  231          // ÈÕÆÚ: 2021-3-9
-  232          // ±¸×¢: 
-  233          //========================================================================
-  234          void delay_ms(u8 ms)
-  235          {
-  236   1           u16 i;
-  237   1           do{
-  238   2                i = MAIN_Fosc / 6000;
-  239   2                while(--i);   //6T per loop
-  240   2           }while(--ms);
-  241   1      }
-  242          
-  243          //========================================================================
-  244          // º¯Êý: void KeyResetScan(void)
-  245          // ÃèÊö: P3.2¿Ú°´¼ü³¤°´1Ãë´¥·¢Èí¼þ¸´Î»£¬½øÈëUSBÏÂÔØÄ£Ê½¡£
-  246          // ²ÎÊý: none.
-  247          // ·µ»Ø: none.
-  248          // °æ±¾: VER1.0
-  249          // ÈÕÆÚ: 2022-6-11
-  250          // ±¸×¢: 
-  251          //========================================================================
-  252          void KeyResetScan(void)
-C251 COMPILER V5.60.0,  main                                                               19/06/23  16:47:43  PAGE 5   
+  180   3            usb_IN(OutNumber);      //Ô­Â··µ»Ø, ÓÃÓÚ²âÊÔ
+  181   3          }
+  182   2        }
+  183   1      }
+  184          
+  185          void sys_init()
+  186          {
+  187   1        WTST = 0;  //ÉèÖÃ³ÌÐòÖ¸ÁîÑÓÊ±²ÎÊý£¬¸³ÖµÎª0¿É½«CPUÖ´ÐÐÖ¸ÁîµÄËÙ¶ÈÉèÖÃÎª×î¿ì
+C251 COMPILER V5.60.0,  main                                                               20/06/23  10:07:46  PAGE 4   
 
-  253          {
-  254   1          if(!P32)
-  255   1          {
-  256   2              if(!Key_Flag)
-  257   2              {
-  258   3                  Key_cnt++;
-  259   3                  if(Key_cnt >= 1000)   //Á¬Ðø1000msÓÐÐ§°´¼ü¼ì²â
-  260   3                  {
-  261   4                      Key_Flag = 1;   //ÉèÖÃ°´¼ü×´Ì¬£¬·ÀÖ¹ÖØ¸´´¥·¢
-  262   4      
-  263   4                      USBCON = 0x00;      //Çå³ýUSBÉèÖÃ
-  264   4                      USBCLK = 0x00;
-  265   4                      IRC48MCR = 0x00;
-  266   4                      
-  267   4                      delay_ms(10);
-  268   4                      IAP_CONTR = 0x60;   //´¥·¢Èí¼þ¸´Î»£¬´ÓISP¿ªÊ¼Ö´ÐÐ
-  269   4                      while (1);
-  270   4                  }
-  271   3              }
-  272   2          }
-  273   1          else
-  274   1          {
-  275   2              Key_cnt = 0;
-  276   2              Key_Flag = 0;
-  277   2          }
-  278   1      }
+  188   1        EAXFR = 1; //À©Õ¹¼Ä´æÆ÷(XFR)·ÃÎÊÊ¹ÄÜ
+  189   1        CKCON = 0; //Ìá¸ß·ÃÎÊXRAMËÙ¶È
+  190   1      
+  191   1        P0M1 = 0x00;   P0M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
+  192   1        P1M1 = 0x00;   P1M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
+  193   1        P2M1 = 0x00;   P2M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
+  194   1        P3M1 = 0x00;   P3M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
+  195   1        P4M1 = 0x00;   P4M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
+  196   1        P5M1 = 0x00;   P5M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
+  197   1        P6M1 = 0x00;   P6M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
+  198   1        P7M1 = 0x00;   P7M0 = 0x00;   //ÉèÖÃÎª×¼Ë«Ïò¿Ú
+  199   1        
+  200   1        Debug_Init(); //µ÷ÊÔ¿Ú³õÊ¼»¯
+  201   1        
+  202   1        I2C_Init(); //I2C³õÊ¼»¯
+  203   1        
+  204   1        //RF24³õÊ¼»¯²¢½øÈëRXÄ£Ê½
+  205   1        RF24_Init();
+  206   1        RF24_Write_Reg(WRITE_REG + EN_AA,0x00); //ÎÞ×Ô¶¯È·ÈÏ
+  207   1        RF24_Write_Reg(WRITE_REG+EN_RXADDR,0x01); //Ê¹ÄÜ¹ÜµÀ0
+  208   1        RF24_Write_Reg(WRITE_REG+SETUP_RETR,0x00);  //¹Ø±Õ×Ô¶¯ÖØ·¢
+  209   1        RF24_RX_Mode();
+  210   1        //RF24_TX_Mode();
+  211   1        RF24_Set_Channel(66);
+  212   1        RF24_Set_Power(RF_PWR_0);
+  213   1        RF24_Set_P0_Size(11);
+  214   1        RF24_Set_Rate(RATE_1M_BPS);
+  215   1        RF24_Write_Buf(WRITE_REG + TX_ADDR, TX_ADDRESS, TX_ADR_WIDTH);     // Ð´Èë·¢ËÍµØÖ·
+  216   1        RF24_Write_Buf(WRITE_REG + RX_ADDR_P0, TX_ADDRESS, TX_ADR_WIDTH);  // ÎªÁËÓ¦´ð½ÓÊÕÉè±¸£¬½ÓÊÕÍ¨µÀ0µØÖ·ºÍ·
+             -¢ËÍµØÖ·ÏàÍ¬
+  217   1        rx_flag = 1;
+  218   1        txc_flag = 0;
+  219   1        
+  220   1        timer0_init(1000, update_1ms);
+  221   1      }
+  222          
+  223          //========================================================================
+  224          // º¯Êý: void delay_ms(u8 ms)
+  225          // ÃèÊö: ÑÓÊ±º¯Êý¡£
+  226          // ²ÎÊý: ms,ÒªÑÓÊ±µÄmsÊý, ÕâÀïÖ»Ö§³Ö1~255ms. ×Ô¶¯ÊÊÓ¦Ö÷Ê±ÖÓ.
+  227          // ·µ»Ø: none.
+  228          // °æ±¾: VER1.0
+  229          // ÈÕÆÚ: 2021-3-9
+  230          // ±¸×¢: 
+  231          //========================================================================
+  232          void delay_ms(u8 ms)
+  233          {
+  234   1           u16 i;
+  235   1           do{
+  236   2                i = MAIN_Fosc / 6000;
+  237   2                while(--i);   //6T per loop
+  238   2           }while(--ms);
+  239   1      }
+  240          
+  241          //========================================================================
+  242          // º¯Êý: void KeyResetScan(void)
+  243          // ÃèÊö: P3.2¿Ú°´¼ü³¤°´1Ãë´¥·¢Èí¼þ¸´Î»£¬½øÈëUSBÏÂÔØÄ£Ê½¡£
+  244          // ²ÎÊý: none.
+  245          // ·µ»Ø: none.
+  246          // °æ±¾: VER1.0
+  247          // ÈÕÆÚ: 2022-6-11
+  248          // ±¸×¢: 
+  249          //========================================================================
+  250          void KeyResetScan(void)
+  251          {
+  252   1          if(!P32)
+C251 COMPILER V5.60.0,  main                                                               20/06/23  10:07:46  PAGE 5   
+
+  253   1          {
+  254   2              if(!Key_Flag)
+  255   2              {
+  256   3                  Key_cnt++;
+  257   3                  if(Key_cnt >= 1000)   //Á¬Ðø1000msÓÐÐ§°´¼ü¼ì²â
+  258   3                  {
+  259   4                      Key_Flag = 1;   //ÉèÖÃ°´¼ü×´Ì¬£¬·ÀÖ¹ÖØ¸´´¥·¢
+  260   4      
+  261   4                      USBCON = 0x00;      //Çå³ýUSBÉèÖÃ
+  262   4                      USBCLK = 0x00;
+  263   4                      IRC48MCR = 0x00;
+  264   4                      
+  265   4                      delay_ms(10);
+  266   4                      IAP_CONTR = 0x60;   //´¥·¢Èí¼þ¸´Î»£¬´ÓISP¿ªÊ¼Ö´ÐÐ
+  267   4                      while (1);
+  268   4                  }
+  269   3              }
+  270   2          }
+  271   1          else
+  272   1          {
+  273   2              Key_cnt = 0;
+  274   2              Key_Flag = 0;
+  275   2          }
+  276   1      }
 
 
 Module Information          Static   Overlayable
 ------------------------------------------------
-  code size            =       588     ------
+  code size            =       553     ------
   ecode size           =    ------     ------
   data size            =    ------     ------
   idata size           =    ------     ------
@@ -310,14 +308,14 @@ Module Information          Static   Overlayable
   xdata size           =    ------     ------
   xdata-const size     =    ------     ------
   edata size           =        50     ------
-  bit size             =         2     ------
+  bit size             =         3     ------
   ebit size            =    ------     ------
   bitaddressable size  =    ------     ------
   ebitaddressable size =    ------     ------
   far data size        =    ------     ------
   huge data size       =    ------     ------
   const size           =    ------     ------
-  hconst size          =       173     ------
+  hconst size          =       165     ------
 End of Module Information.
 
 

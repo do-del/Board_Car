@@ -1,0 +1,66 @@
+C251 COMPILER V5.60.0,  mpu6050                                                            19/06/23  14:54:31  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE mpu6050
+OBJECT MODULE PLACED IN .\obj\mpu6050.obj
+COMPILER INVOKED BY: C:\Keil_c251\C251\BIN\C251.EXE Del\mpu6050.c XSMALL INTR2 BROWSE INCDIR(.\Del;.\src) DEBUG PRINT(.\
+                    -obj\mpu6050.lst) TABS(2) OBJECT(.\obj\mpu6050.obj) 
+
+stmt  level    source
+
+    1          #include "mpu6050.h"
+    2          
+    3          void mpu6050_init(void)
+    4          {
+    5   1        unsigned char dat[1];
+    6   1        
+    7   1        dat[0] = 0x00;
+    8   1        I2C_Write(MPU6050_ADDR, 0x6B, dat, 1);
+    9   1        
+   10   1        dat[0] = 0x08;
+   11   1        I2C_Write(MPU6050_ADDR, 0x1B, dat, 1);
+   12   1        
+   13   1        dat[0] = 0x10;
+   14   1        I2C_Write(MPU6050_ADDR, 0x1C, dat, 1);
+   15   1        
+   16   1        dat[0] = 0x03;
+   17   1        I2C_Write(MPU6050_ADDR, 0x1A, dat, 1);
+   18   1      }
+   19          
+   20          void mpu6050_read(mpu6050_struct *mpu6050_data)
+   21          {
+   22   1        unsigned char buf[14];
+   23   1        
+   24   1        I2C_Read(MPU6050_ADDR, 0x3B, buf, 14);
+   25   1        mpu6050_data->acc_x = (buf[0]<<8) | (buf[1]);
+   26   1        mpu6050_data->acc_y = (buf[2]<<8) | (buf[3]);
+   27   1        mpu6050_data->acc_z = (buf[4]<<8) | (buf[5]);
+   28   1        mpu6050_data->temperature = (buf[6]<<8) | (buf[7]);
+   29   1        mpu6050_data->gyro_roll = (buf[8]<<8) | (buf[9]);
+   30   1        mpu6050_data->gyro_pitch = (buf[10]<<8) | (buf[11]);
+   31   1        mpu6050_data->gyro_yaw = (buf[12]<<8) | (buf[13]);
+   32   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =       216     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =    ------         15
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =    ------     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

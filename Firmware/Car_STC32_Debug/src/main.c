@@ -53,6 +53,7 @@ bit Key_Flag;
 u16 Key_cnt;
 
 bit rx_flag = 1;
+bit txc_flag = 0;
 unsigned char rx[11] = {0};
 unsigned char tx[11] = {'O','K',0};
 
@@ -89,25 +90,23 @@ void I2C_Scan(void)
 
 void update_1ms(void)
 {
+	if(txc_flag)
+	{
+		RF24_RX_Mode();
+		txc_flag = 0;
+	}
 	if(rx_flag)
 	{
 		if(RF24_IRQ == 0)
 		{
-			//uint8_t i;
 			RF24_Read_Buf(RD_RX_PLOAD,rx,11);     //读取数据
 			CE_LOW();
 			RF24_Write_Reg(WRITE_REG+STATUS,0x40);
 			CE_HIGH();
 			
-			/*
-			for(i = 0;i<11;i++)
-			{
-				Uart_Send(rx[i]);
-			}
-			*/
-			printf("rx:%c\r\n", rx[0]);
-			if(rx[0] == 'D')
-			{
+			//printf("rx:%c\r\n", rx[0]);
+			//if(rx[0] == 'D')
+			//{
 				/*
 				PWM_Set_Duty(CH_0,(uint16_t)(rx[1]<<3)+500);
 				PWM_Set_Duty(CH_1,(uint16_t)(rx[2]<<3)+500);
@@ -116,7 +115,7 @@ void update_1ms(void)
 				CH9 = rx[5];
 				CH10 = rx[6];
 				*/
-			}
+			//}
 			rx_flag = 0;
 			RF24_TX_Mode();
 		}
@@ -126,9 +125,10 @@ void update_1ms(void)
 		CE_LOW();
 		RF24_Write_Buf(WR_TX_PLOAD, tx, 11);
 		CE_HIGH();
-		delay_ms(1);
+		//delay_ms(1);
 		rx_flag = 1;
-		RF24_RX_Mode();
+		txc_flag = 1;
+		//RF24_RX_Mode();
 	}
 }
 
@@ -138,17 +138,14 @@ void main()
 	usb_init();  //USB CDC 接口配置
 	EA = 1;
 	
+	P53 = 0;
 	while(DeviceState != DEVSTATE_CONFIGURED); //等待USB完成配置
-	
-	P20 = 0;
-	P21= 0;
-	P3PU |= 0x08;
+	//P3PU |= 0x08;
 	delay_ms(200);
 	delay_ms(200);
 	delay_ms(200);
 	delay_ms(200);
 	delay_ms(200);
-	P21 = 1;
 	printf("---------STC32 Debug----------\r\n");
 	//I2C_Scan();
 	//mpu6050_init();
@@ -163,22 +160,7 @@ void main()
 	pwm1n_enable();
 	pwm4n_enable();
 	
-	//RF24初始化并进入RX模式
-	RF24_Init();
-	RF24_Write_Reg(WRITE_REG + EN_AA,0x00);
-	RF24_Write_Reg(WRITE_REG+EN_RXADDR,0x01);
-	RF24_Write_Reg(WRITE_REG+SETUP_RETR,0x00);
-	RF24_RX_Mode();
-	//RF24_TX_Mode();
-	RF24_Set_Channel(66);
-	RF24_Set_Power(RF_PWR_0);
-	RF24_Set_P0_Size(11);
-	RF24_Set_Rate(RATE_1M_BPS);
-	RF24_Write_Buf(WRITE_REG + TX_ADDR, TX_ADDRESS, TX_ADR_WIDTH);     // 写入发送地址
-	RF24_Write_Buf(WRITE_REG + RX_ADDR_P0, TX_ADDRESS, TX_ADR_WIDTH);  // 为了应答接收设备，接收通道0地址和发送地址相同
-	rx_flag = 1;
-	
-	P20 = 1;
+	P53 = 1;
 	
 	while (1)
 	{
@@ -217,7 +199,23 @@ void sys_init()
 	
 	Debug_Init();	//调试口初始化
 	
-	I2C_Init();
+	I2C_Init();	//I2C初始化
+	
+	//RF24初始化并进入RX模式
+	RF24_Init();
+	RF24_Write_Reg(WRITE_REG + EN_AA,0x00);	//无自动确认
+	RF24_Write_Reg(WRITE_REG+EN_RXADDR,0x01);	//使能管道0
+	RF24_Write_Reg(WRITE_REG+SETUP_RETR,0x00);	//关闭自动重发
+	RF24_RX_Mode();
+	//RF24_TX_Mode();
+	RF24_Set_Channel(66);
+	RF24_Set_Power(RF_PWR_0);
+	RF24_Set_P0_Size(11);
+	RF24_Set_Rate(RATE_1M_BPS);
+	RF24_Write_Buf(WRITE_REG + TX_ADDR, TX_ADDRESS, TX_ADR_WIDTH);     // 写入发送地址
+	RF24_Write_Buf(WRITE_REG + RX_ADDR_P0, TX_ADDRESS, TX_ADR_WIDTH);  // 为了应答接收设备，接收通道0地址和发送地址相同
+	rx_flag = 1;
+	txc_flag = 0;
 	
 	timer0_init(1000, update_1ms);
 }

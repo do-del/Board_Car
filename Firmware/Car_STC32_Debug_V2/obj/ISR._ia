@@ -1,0 +1,1 @@
+"src\ISR.ASM" MODSRC INTR2 SET (XSMALL) DEBUG PRINT(.\obj\ISR.lst) OBJECT(.\obj\ISR.obj) EP

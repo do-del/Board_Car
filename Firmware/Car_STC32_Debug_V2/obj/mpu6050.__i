@@ -1,0 +1,1 @@
+"Del\mpu6050.c" XSMALL INTR2 BROWSE INCDIR(.\Del;.\src) DEBUG PRINT(.\obj\mpu6050.lst) TABS (2) OBJECT(.\obj\mpu6050.obj)
