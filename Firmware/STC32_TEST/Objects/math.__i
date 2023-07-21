@@ -1,0 +1,1 @@
+"Src\math.c" LARGE INTR2 ROM(HUGE) BROWSE INCDIR(.\Inc) DEBUG PRINT(.\Listings\math.lst) TABS (2) OBJECT(.\Objects\math.obj)

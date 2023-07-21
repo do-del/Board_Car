@@ -1,5 +1,12 @@
 ".\Objects\main.obj",
-".\Objects\pwm.obj" 
+".\Objects\pwm.obj",
+".\Objects\motor.obj",
+".\Objects\math.obj",
+".\Objects\uart.obj",
+".\Objects\sys.obj",
+".\Objects\rf24.obj",
+".\Objects\spi.obj",
+".\Objects\timer.obj" 
 TO ".\Objects\STC32_TEST" 
 PRINT(".\Listings\STC32_TEST.map") CASE 
 CLASSES (EDATA (0x0-0xFFF), 

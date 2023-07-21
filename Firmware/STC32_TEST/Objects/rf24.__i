@@ -1,0 +1,1 @@
+"Src\rf24.c" LARGE INTR2 ROM(HUGE) BROWSE INCDIR(.\Inc) DEBUG PRINT(.\Listings\rf24.lst) TABS (2) OBJECT(.\Objects\rf24.obj)

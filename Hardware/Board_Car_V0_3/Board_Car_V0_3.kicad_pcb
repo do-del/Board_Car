@@ -2599,7 +2599,7 @@
   )
   (gr_text "Designed By Del" (at 42.926 100.965) (layer "F.SilkS" knockout) (tstamp cf8002cc-652f-4fbc-84e5-6cd7050c317f)
     (effects (font (face "Agency FB") (size 1 1) (thickness 0.2) bold) (justify left bottom))
-    (render_cache "Designed By Del" -0
+    (render_cache "Designed By Del" 0
       (polygon
         (pts
           (xy 43.330037 99.716636)          (xy 43.341514 99.717274)          (xy 43.352683 99.718338)          (xy 43.363545 99.719827)

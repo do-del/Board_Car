@@ -1,0 +1,1 @@
+"Src\motor.c" LARGE INTR2 ROM(HUGE) BROWSE INCDIR(.\Inc) DEBUG PRINT(.\Listings\motor.lst) TABS (2) OBJECT(.\Objects\motor.obj)

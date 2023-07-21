@@ -188,7 +188,7 @@
           <Target251Misc>
             <MemoryModel>4</MemoryModel>
             <RTOS>0</RTOS>
-            <RomSize>3</RomSize>
+            <RomSize>4</RomSize>
             <NearDataHold>0</NearDataHold>
             <XDataHold>0</XDataHold>
             <FarDataHold>0</FarDataHold>
@@ -333,6 +333,41 @@
               <FileName>pwm.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Src\pwm.c</FilePath>
+            </File>
+            <File>
+              <FileName>motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Src\motor.c</FilePath>
+            </File>
+            <File>
+              <FileName>math.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Src\math.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Src\uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Src\sys.c</FilePath>
+            </File>
+            <File>
+              <FileName>rf24.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Src\rf24.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Src\spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Src\timer.c</FilePath>
             </File>
           </Files>
         </Group>

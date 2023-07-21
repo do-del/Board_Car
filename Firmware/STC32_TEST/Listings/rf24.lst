@@ -1,0 +1,255 @@
+C251 COMPILER V5.60.0,  rf24                                                               21/07/23  12:35:11  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE rf24
+OBJECT MODULE PLACED IN .\Objects\rf24.obj
+COMPILER INVOKED BY: C:\Keil_c251\C251\BIN\C251.EXE Src\rf24.c LARGE INTR2 ROM(HUGE) BROWSE INCDIR(.\Inc) DEBUG PRINT(.\
+                    -Listings\rf24.lst) TABS(2) OBJECT(.\Objects\rf24.obj) 
+
+stmt  level    source
+
+    1          #include "rf24.h"
+    2          
+    3          unsigned char TX_ADDRESS[TX_ADR_WIDTH] = {0x0A,0x01,0x07,0x0E,0x01};  // 定义一个静态发送地址
+    4          
+    5          /********************************************************
+    6          函数功能：RF24引脚初始化                
+    7          入口参数：无
+    8          返回  值：无
+    9          *********************************************************/
+   10          void RF24_Init(void)
+   11          {
+   12   1        SCK_LOW();  //SCK = 0;                          //SPI时钟线拉低
+   13   1        CSN_HIGH(); //CSN = 1;
+   14   1        CE_LOW(); //CE  = 0;
+   15   1        //IRQ = 1;
+   16   1      }
+   17          
+   18          
+   19          /********************************************************
+   20          函数功能：写寄存器的值（单字节）                
+   21          入口参数：reg:寄存器映射地址（格式：WRITE_REG｜reg）
+   22                    value:寄存器的值
+   23          返回  值：状态寄存器的值
+   24          *********************************************************/
+   25          unsigned char RF24_Write_Reg(unsigned char reg, unsigned char value)
+   26          {
+   27   1        unsigned char status;
+   28   1      
+   29   1        CSN_LOW();  //CSN = 0;                 
+   30   1        status = SPI_RW(reg);       
+   31   1        SPI_RW(value);
+   32   1        CSN_HIGH(); //CSN = 1;  
+   33   1        
+   34   1        return(status);
+   35   1      }
+   36          
+   37          
+   38          /********************************************************
+   39          函数功能：写寄存器的值（多字节）                  
+   40          入口参数：reg:寄存器映射地址（格式：WRITE_REG｜reg）
+   41                    pBuf:写数据首地址
+   42                    bytes:写数据字节数
+   43          返回  值：状态寄存器的值
+   44          *********************************************************/
+   45          unsigned char RF24_Write_Buf(unsigned char reg, const unsigned char *pBuf, unsigned char bytes)
+   46          {
+   47   1        unsigned char status,byte_ctr;
+   48   1      
+   49   1        CSN_LOW();  //CSN = 0;                                        
+   50   1        status = SPI_RW(reg);                          
+   51   1        for(byte_ctr=0; byte_ctr<bytes; byte_ctr++)     
+   52   1          SPI_RW(*pBuf++);
+   53   1        CSN_HIGH(); //CSN = 1;                                        
+   54   1      
+   55   1        return(status);       
+   56   1      }                            
+   57          
+   58          
+C251 COMPILER V5.60.0,  rf24                                                               21/07/23  12:35:11  PAGE 2   
+
+   59          /********************************************************
+   60          函数功能：读取寄存器的值（单字节）                  
+   61          入口参数：reg:寄存器映射地址（格式：READ_REG｜reg）
+   62          返回  值：寄存器值
+   63          *********************************************************/
+   64          unsigned char RF24_Read_Reg(unsigned char reg)
+   65          {
+   66   1        unsigned char value;
+   67   1      
+   68   1        CSN_LOW();  //CSN = 0;    
+   69   1        SPI_RW(reg);      
+   70   1        value = SPI_RW(0);
+   71   1        CSN_HIGH(); //CSN = 1;              
+   72   1      
+   73   1        return(value);
+   74   1      }
+   75          
+   76          
+   77          /********************************************************
+   78          函数功能：读取寄存器的值（多字节）                  
+   79          入口参数：reg:寄存器映射地址（READ_REG｜reg）
+   80                    pBuf:接收缓冲区的首地址
+   81                    bytes:读取字节数
+   82          返回  值：状态寄存器的值
+   83          *********************************************************/
+   84          unsigned char RF24_Read_Buf(unsigned char reg, unsigned char *pBuf, unsigned char bytes)
+   85          {
+   86   1        unsigned char status,byte_ctr;
+   87   1      
+   88   1        CSN_LOW();  //CSN = 0;                                        
+   89   1        status = SPI_RW(reg);                           
+   90   1        for(byte_ctr=0;byte_ctr<bytes;byte_ctr++)
+   91   1          pBuf[byte_ctr] = SPI_RW(0);                   //读取数据，低字节在前
+   92   1        CSN_HIGH(); //CSN = 1;                                        
+   93   1      
+   94   1        return(status);    
+   95   1      }
+   96          
+   97          
+   98          /********************************************************
+   99          函数功能：RF24接收模式初始化                      
+  100          入口参数：无
+  101          返回  值：无
+  102          *********************************************************/
+  103          void RF24_RX_Mode(void)
+  104          {
+  105   1        CE_LOW(); //CE = 0;
+  106   1        RF24_Write_Reg(WRITE_REG + CONFIG, 0x0f);                         // CRC使能，16位CRC校验，上电，接收模式
+  107   1        RF24_Write_Reg(WRITE_REG + STATUS, 0xff);                         //清除所有的中断标志位
+  108   1        CE_HIGH();  //CE = 1;                                                             // 拉高CE启动接收设备
+  109   1      }           
+  110          
+  111          
+  112          /********************************************************
+  113          函数功能：RF24发送模式初始化                      
+  114          入口参数：无
+  115          返回  值：无
+  116          *********************************************************/
+  117          void RF24_TX_Mode(void)
+  118          {
+  119   1        CE_LOW(); //CE = 0;
+  120   1        RF24_Write_Reg(WRITE_REG + CONFIG, 0x0e);                           // CRC使能，16位CRC校验，上电
+  121   1        RF24_Write_Reg(WRITE_REG + STATUS, 0xff);
+  122   1        CE_HIGH();  //CE = 1;
+  123   1      }
+  124          
+C251 COMPILER V5.60.0,  rf24                                                               21/07/23  12:35:11  PAGE 3   
+
+  125          
+  126          /********************************************************
+  127          函数功能：读取接收数据                       
+  128          入口参数：rxbuf:接收数据存放首地址
+  129          返回  值：0:接收到数据
+  130                    1:没有接收到数据
+  131          *********************************************************/
+  132          /*
+  133          unsigned char RF24_RxPacket(unsigned char *rxbuf)
+  134          {
+  135            unsigned char state;
+  136            state = RF24_Read_Reg(STATUS);                         //读取状态寄存器的值       
+  137            RF24_Write_Reg(WRITE_REG+STATUS,state);               //清除RX_DS中断标志
+  138          
+  139            if(state & RX_DR)                                          //接收到数据
+  140            {
+  141              RF24_Read_Buf(RD_RX_PLOAD,rxbuf,11); //TX_PLOAD_WIDTH);     //读取数据
+  142              RF24_Write_Reg(FLUSH_RX,0xff);                        //清除RX FIFO寄存器
+  143              return 0; 
+  144            }    
+  145            return 1;                                                   //没收到任何数据
+  146          }
+  147          */
+  148          
+  149          /********************************************************
+  150          函数功能：发送一个数据包                      
+  151          入口参数：txbuf:要发送的数据
+  152          返回  值：0x10:达到最大重发次数，发送失败 
+  153                    0x20:发送成功            
+  154                    0xff:发送失败                  
+  155          *********************************************************/
+  156          /*
+  157          unsigned char RF24_TxPacket(unsigned char *txbuf)
+  158          {
+  159            unsigned char state;
+  160            CE_LOW();//CE=0;                                                      //CE拉低，使能RF24配置
+  161            RF24_Write_Buf(WR_TX_PLOAD, txbuf, TX_PLOAD_WIDTH);     //写数据到TX FIFO,32个字节
+  162            CE_HIGH();  //CE=1;                                                     //CE置高，使能发送     
+  163            
+  164            while(RF24_IRQ == 1);                                         //等待发送完成
+  165            state = RF24_Read_Reg(STATUS);                          //读取状态寄存器的值     
+  166            RF24_Write_Reg(WRITE_REG+STATUS, state);                //清除TX_DS或MAX_RT中断标志
+  167            if(state&MAX_RT)                                          //达到最大重发次数
+  168            {
+  169              RF24_Write_Reg(FLUSH_TX,0xff);                        //清除TX FIFO寄存器 
+  170              return MAX_RT; 
+  171            }
+  172            if(state&TX_DS)                                           //发送完成
+  173            {
+  174              return TX_DS;
+  175            }
+  176            return 0XFF;                                              //发送失败
+  177          }
+  178          */
+  179          
+  180          void RF24_Set_Power(unsigned char p)
+  181          {
+  182   1        unsigned char temp;
+  183   1        CE_LOW();
+  184   1        temp = RF24_Read_Reg(RF_SETUP);
+  185   1        temp &= ~0x07;
+  186   1        temp |= p;
+  187   1        RF24_Write_Reg(WRITE_REG+RF_SETUP,temp);
+  188   1        CE_HIGH();
+  189   1      }
+  190          
+C251 COMPILER V5.60.0,  rf24                                                               21/07/23  12:35:11  PAGE 4   
+
+  191          void RF24_Set_Channel(unsigned char ch)
+  192          {
+  193   1        CE_LOW();
+  194   1        RF24_Write_Reg(WRITE_REG + RF_CH,ch);
+  195   1        CE_HIGH();
+  196   1      }
+  197          
+  198          void RF24_Set_Rate(unsigned char rate)
+  199          {
+  200   1        unsigned char temp;
+  201   1        CE_LOW();
+  202   1        temp = RF24_Read_Reg(RF_SETUP);
+  203   1        temp &= 0xd7; //0b1101 0111
+  204   1        temp |= (rate&0x01)<<3;
+  205   1        temp |= (rate&0x02)<<4;
+  206   1        RF24_Write_Reg(WRITE_REG+RF_SETUP,temp);
+  207   1        CE_HIGH();
+  208   1      }
+  209          
+  210          void RF24_Set_P0_Size(unsigned char len)
+  211          {
+  212   1        CE_LOW();
+  213   1        RF24_Write_Reg(WRITE_REG + RX_PW_P0,len);
+  214   1        CE_HIGH();
+  215   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =    ------     ------
+  ecode size           =       340     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =         5          6
+  xdata-const size     =    ------     ------
+  edata size           =    ------     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =        10     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
